@@ -3,14 +3,14 @@
 #include <signal.h>
 #include <time.h>
 #include "driver/elevio.h"
-
+#include "queue.h"
 
 
 int main(){
     elevio_init();
     
     
-    /* elevio_motorDirection(DIRN_UP);
+    elevio_motorDirection(DIRN_UP);
 
     while(1){
         printf("heisann\n");
@@ -23,6 +23,8 @@ int main(){
         if(floor == N_FLOORS-1){
             elevio_motorDirection(DIRN_DOWN);
         }
+
+        test();
 
         // for(int f = 0; f < N_FLOORS; f++){
         //     for(int b = 0; b < N_BUTTONS; b++){
@@ -46,5 +48,5 @@ int main(){
     }
 
     return 0;
-    */
+    
 }
