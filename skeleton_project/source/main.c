@@ -10,26 +10,18 @@
 int main(){
     elevio_init();
     Queue* p_main_queue = queue_init();
+
+    queue_add(p_main_queue, (Request){2, true, true});
+    queue_add(p_main_queue, (Request){1, false, false});
+    queue_add(p_main_queue, (Request){1, true, false});
+    queue_add(p_main_queue, (Request){4, true, false});
     
-    elevio_motorDirection(DIRN_UP);
+    printf(queue_has_off_requests(p_main_queue) ? "has off requests\n" : "has no off requests\n");
+
 
     sleep(1);
-    // nanosleep(&(struct timespec){0, 20*1000*1000}, NULL);
 
-
-    // while(1){
-    //     int floor = elevio_floorSensor();
-
-    //     if(floor == 0){
-    //         elevio_motorDirection(DIRN_UP);
-    //     }
-
-    //     if(floor == N_FLOORS-1){
-    //         elevio_motorDirection(DIRN_DOWN);
-    //     }
-
-    //     nanosleep(&(struct timespec){0, 20*1000*1000}, NULL);
-    // }
+    queue_print(p_main_queue);
 
     queue_deinit(p_main_queue);
 
