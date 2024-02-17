@@ -2,51 +2,36 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <time.h>
+#include <unistd.h>
 #include "driver/elevio.h"
 #include "queue.h"
 
 
 int main(){
     elevio_init();
-    
+    Queue* p_main_queue = queue_init();
     
     elevio_motorDirection(DIRN_UP);
 
-    while(1){
-        printf("heisann\n");
-        int floor = elevio_floorSensor();
+    sleep(1);
+    // nanosleep(&(struct timespec){0, 20*1000*1000}, NULL);
 
-        if(floor == 0){
-            elevio_motorDirection(DIRN_UP);
-        }
 
-        if(floor == N_FLOORS-1){
-            elevio_motorDirection(DIRN_DOWN);
-        }
+    // while(1){
+    //     int floor = elevio_floorSensor();
 
-        test();
+    //     if(floor == 0){
+    //         elevio_motorDirection(DIRN_UP);
+    //     }
 
-        // for(int f = 0; f < N_FLOORS; f++){
-        //     for(int b = 0; b < N_BUTTONS; b++){
-        //         int btnPressed = elevio_callButton(f, b);
-        //         elevio_buttonLamp(f, b, btnPressed);
-        //     }
-        // }
+    //     if(floor == N_FLOORS-1){
+    //         elevio_motorDirection(DIRN_DOWN);
+    //     }
 
-        if(elevio_obstruction()){
-            elevio_stopLamp(1);
-        } else {
-            elevio_stopLamp(0);
-        }
-        
-        if(elevio_stopButton()){
-            elevio_motorDirection(DIRN_STOP);
-            break;
-        }
+    //     nanosleep(&(struct timespec){0, 20*1000*1000}, NULL);
+    // }
 
-        nanosleep(&(struct timespec){0, 20*1000*1000}, NULL);
-    }
+    queue_deinit(p_main_queue);
 
-    return 0;
-    
+    return 0;    
 }
