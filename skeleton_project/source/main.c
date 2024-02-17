@@ -4,11 +4,22 @@
 #include <time.h>
 #include "driver/elevio.h"
 
+#include "state_machine.h"
 
 
 int main(){
-    elevio_init();
+
+    State test_state = DOWN_EMPTY;
+    printf("Behavior: ");
+    behaviour(&test_state);
+
+    Trigger test_trigger = TEST_TJOHO;
+    printf("\nTransition: \n");
+    transition(&test_state, test_trigger);
     
+    printf("\n");
+    /*
+    elevio_init();
     
     elevio_motorDirection(DIRN_UP);
 
@@ -44,7 +55,8 @@ int main(){
 
         nanosleep(&(struct timespec){0, 20*1000*1000}, NULL);
     }
-// tjoho
+    */
+
     return 0;
-    
+
 }
