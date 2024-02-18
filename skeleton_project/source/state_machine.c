@@ -3,22 +3,23 @@
 void behaviour(State* p_current_state){
     
     switch(*p_current_state) {
-        case 0: 
-            // do something
+        case UP_EMPTY: // eller tall?
+            elevio_motorDirection(DIRN_UP);
             break;
-        case 1: 
+        case UP_UNEMPTY:
+            elevio_motorDirection(DIRN_UP);
+            break;
+        case DOWN_EMPTY:
             printf("State: %d\n",*p_current_state);
+            elevio_motorDirection(DIRN_DOWN);
             break;
-        case 2: 
+        case DOWN_UNEMPTY:
+            elevio_motorDirection(DIRN_DOWN);
+            break;
+        case STATIONARY_EMPTY:
             // do something
             break;
-        case 3: 
-            // do something
-            break;
-        case 4: 
-            // do something
-            break;
-        case 5: 
+        case STATIONARY_UNEMPTY: 
             // do something
             break;
     }
@@ -27,9 +28,9 @@ void behaviour(State* p_current_state){
 
 
 void transition(State* p_current_state, Trigger trigger){
-    
+    // variable = (condition) ? expressionTrue : expressionFalse;
     switch(*p_current_state) {
-        case 0: 
+        case UP_EMPTY: 
             switch(trigger){
                 case 0:
                     // do something
@@ -42,7 +43,20 @@ void transition(State* p_current_state, Trigger trigger){
                     break;
             }
             break;
-        case 1: 
+        case UP_UNEMPTY: 
+            switch(trigger){
+                case 0:
+                    // do something
+                    break;
+                case 1: 
+                    // do something
+                    break;
+                case 2: 
+                    // do something
+                    break;
+            }
+            break;
+        case DOWN_EMPTY: 
             switch(trigger){
                 case 0:
                     // do something
@@ -55,7 +69,7 @@ void transition(State* p_current_state, Trigger trigger){
                     break;
             }
             break;
-        case 2: 
+        case DOWN_UNEMPTY: 
             switch(trigger){
                 case 0:
                     // do something
@@ -68,7 +82,7 @@ void transition(State* p_current_state, Trigger trigger){
                     break;
             }
             break;
-        case 3: 
+        case STATIONARY_EMPTY: 
             switch(trigger){
                 case 0:
                     // do something
@@ -81,20 +95,7 @@ void transition(State* p_current_state, Trigger trigger){
                     break;
             }
             break;
-        case 4: 
-            switch(trigger){
-                case 0:
-                    // do something
-                    break;
-                case 1: 
-                    // do something
-                    break;
-                case 2: 
-                    // do something
-                    break;
-            }
-            break;
-        case 5: 
+        case STATIONARY_UNEMPTY: 
             switch(trigger){
                 case 0:
                     // do something
