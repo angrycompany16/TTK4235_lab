@@ -15,10 +15,14 @@ Queue* queue_init(void);
 
 void queue_deinit(Queue* p_queue);
 
-void add(Queue* p_queue, Request req);
+void queue_add(Queue* p_queue, Request req);
 
-void remove_all(Queue* p_queue, int floor);
+void queue_remove(Queue* p_queue, size_t pos);
 
-void print_queue(Queue* p_queue);
+void queue_remove_all(Queue* p_queue, int floor);
 
-bool no_off_requests(Queue* p_queue);
+void queue_print(Queue* p_queue);
+
+bool queue_has_off_requests(Queue* p_queue);
+
+bool queue_query(Queue* p_queue, bool up, bool off);
