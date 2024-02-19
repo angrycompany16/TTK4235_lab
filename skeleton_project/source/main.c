@@ -9,15 +9,6 @@
 
 int main(){
 
-    State test_state = DOWN_EMPTY;
-    printf("Behavior\n");
-    behaviour(&test_state);
-
-    Trigger test_trigger = TEST_TJOHO;
-    printf("\nTransition\n");
-    transition(&test_state, test_trigger);
-    
-    printf("\n");
     /*
     elevio_init();
     

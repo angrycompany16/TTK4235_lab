@@ -8,21 +8,29 @@
 // enums
 typedef enum State {
     UP_EMPTY,
-    DOWN_EMPTY,
     UP_UNEMPTY,
+
+    DOWN_EMPTY,
     DOWN_UNEMPTY,
-    STATIONARY_EMPTY, 
-    STATIONARY_UNEMPTY
-    // tilstand for åpne/lukka dører? dører kan kun åpnes i stasjonær tilstand
+
+    BLOCKED_EMPTY, 
+    BLOCKED_UNEMPTY,
+
+    OPEN_EMPTY, 
+    OPEN_UNEMPTY,
+
+    CLOSED_EMPTY, 
+    CLOSED_UNEMPTY
 } State;
 
 typedef enum Trigger {
-    BUTTON_PRESSED, // to ulike typer knapper for inni og utpå heisen?
-    DOOR_STATUS,
-    FLOOR_INDICATOR,
-    MAX_FLOOR, // heisen skal ikke bevege seg forbi 4.etasje
-    MIN_FLOOR, // eller under 1.
-    TEST_TJOHO
+    STOP,
+    ENTERED_FLOOR,
+    OBSTRUCTION,
+    TIMER,
+    UP,
+    DOWN,
+    STAY
 } Trigger;
 
 // functions
