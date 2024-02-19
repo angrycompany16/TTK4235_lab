@@ -4,9 +4,9 @@
 #include <signal.h>
 #include <time.h>
 #include "driver/elevio.h"
+#include "queue.h"
 
-// enums
-typedef enum State {
+typedef enum FSM_State {
     UP_EMPTY,
     UP_UNEMPTY,
 
@@ -21,9 +21,9 @@ typedef enum State {
 
     CLOSED_EMPTY, 
     CLOSED_UNEMPTY
-} State;
+} FSM_State;
 
-typedef enum Trigger {
+typedef enum FSM_Trigger {
     STOP,
     ENTERED_FLOOR,
     OBSTRUCTION,
@@ -31,8 +31,9 @@ typedef enum Trigger {
     UP,
     DOWN,
     STAY
-} Trigger;
+} FSM_Trigger;
 
 // functions
-void behaviour(State* p_current_state);
-void transition(State* p_current_state, Trigger trigger);
+FSM_State* FSM_init(void);
+void FSM_behaviour(FSM_State* p_current_state);
+void FSM_transition(FSM_State* p_current_state, FSM_Trigger trigger, Queue* p_main_queue);
