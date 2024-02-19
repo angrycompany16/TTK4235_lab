@@ -2,49 +2,29 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <time.h>
+#include <unistd.h>
 #include "driver/elevio.h"
-
+#include "queue.h"
 
 
 int main(){
     elevio_init();
+    Queue* p_main_queue = queue_init();
+
+    queue_add(p_main_queue, (Request){2, true, true});
+    queue_add(p_main_queue, (Request){1, false, false});
+    queue_add(p_main_queue, (Request){1, true, false});
+    queue_add(p_main_queue, (Request){4, true, false});
+    queue_add(p_main_queue, (Request){4, true, false});
     
-    
-    /* elevio_motorDirection(DIRN_UP);
+    printf(queue_has_off_requests(p_main_queue) ? "has off requests\n" : "has no off requests\n");
+    printf(queue_query(p_main_queue, true, false) ? "has query matches\n" : "has no query matches\n");
 
-    while(1){
-        printf("heisann\n");
-        int floor = elevio_floorSensor();
+    sleep(1);
 
-        if(floor == 0){
-            elevio_motorDirection(DIRN_UP);
-        }
+    queue_print(p_main_queue);
 
-        if(floor == N_FLOORS-1){
-            elevio_motorDirection(DIRN_DOWN);
-        }
+    queue_deinit(p_main_queue);
 
-        // for(int f = 0; f < N_FLOORS; f++){
-        //     for(int b = 0; b < N_BUTTONS; b++){
-        //         int btnPressed = elevio_callButton(f, b);
-        //         elevio_buttonLamp(f, b, btnPressed);
-        //     }
-        // }
-
-        if(elevio_obstruction()){
-            elevio_stopLamp(1);
-        } else {
-            elevio_stopLamp(0);
-        }
-        
-        if(elevio_stopButton()){
-            elevio_motorDirection(DIRN_STOP);
-            break;
-        }
-
-        nanosleep(&(struct timespec){0, 20*1000*1000}, NULL);
-    }
-
-    return 0;
-    */
+    return 0;    
 }
