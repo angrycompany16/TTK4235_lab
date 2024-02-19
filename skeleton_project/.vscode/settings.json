@@ -1,5 +1,7 @@
 {
     "files.associations": {
-        "elevio.h": "c"
+        "elevio.h": "c",
+        "run.h": "c",
+        "time.h": "c"
     }
 }
