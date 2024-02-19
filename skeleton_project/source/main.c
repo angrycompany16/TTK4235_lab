@@ -4,11 +4,15 @@
 #include <time.h>
 #include <unistd.h>
 #include "driver/elevio.h"
+#include "state_machine.h"
 #include "queue.h"
 
 
 int main(){
+
+    /*
     elevio_init();
+
     Queue* p_main_queue = queue_init();
 
     queue_add(p_main_queue, (Request){2, true, true});
@@ -24,7 +28,10 @@ int main(){
 
     queue_print(p_main_queue);
 
-    queue_deinit(p_main_queue);
+        nanosleep(&(struct timespec){0, 20*1000*1000}, NULL);
+    }
+    */
 
-    return 0;    
-}
+    return 0;
+
+}  
