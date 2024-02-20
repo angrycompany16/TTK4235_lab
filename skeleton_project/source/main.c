@@ -6,9 +6,24 @@
 #include "driver/elevio.h"
 #include "FSM.h"
 #include "queue.h"
+#include "timer.h"
 
 
 int main(){
+
+    /*
+    // test av timer
+    time_t start_time;
+
+    printf("Starting timer");
+    start_timer(&start_time);
+    
+    while(!time_limit(&start_time)){
+        printf("ikke enda");
+    }
+
+    printf("der ja");
+    */
 
     /*
     elevio_init();

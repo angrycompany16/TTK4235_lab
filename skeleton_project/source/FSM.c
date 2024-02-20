@@ -1,4 +1,5 @@
 #include "FSM.h"
+#include "timer.h"
 
 FSM_State* FSM_init(){
 
@@ -69,7 +70,7 @@ void FSM_behaviour(FSM_State* p_current_state){
     }
 }
 
-void FSM_transition(FSM_State* p_current_state, FSM_Trigger trigger, Queue* p_main_queue){
+void FSM_transition(FSM_State* p_current_state, FSM_Trigger trigger, Queue* p_main_queue, time_t* time){
 
     switch(*p_current_state) {
 
@@ -139,7 +140,11 @@ void FSM_transition(FSM_State* p_current_state, FSM_Trigger trigger, Queue* p_ma
                     // do something
                     break;
                 case TIMER:
-                    // do something
+                    // implement waiting for stop-button release before starting timer
+                    //start_timer(time);
+                    if (time_limit(time)){
+                        *p_current_state = CLOSED_EMPTY;
+                    }
                     break;
                 default:
                     *p_current_state = OPEN_EMPTY;
@@ -155,7 +160,10 @@ void FSM_transition(FSM_State* p_current_state, FSM_Trigger trigger, Queue* p_ma
                     // do something
                     break;
                 case TIMER:
-                    // do something
+                    start_timer(time);
+                    if (time_limit(time)){
+                        *p_current_state = CLOSED_UNEMPTY;
+                    }
                     break;
                 default:
                     *p_current_state = OPEN_UNEMPTY;
@@ -199,7 +207,11 @@ void FSM_transition(FSM_State* p_current_state, FSM_Trigger trigger, Queue* p_ma
         case BLOCKED_EMPTY: 
             switch(trigger){
                 case TIMER:
-                    // do something
+                    // waits for obstr release
+                    // start_timer(time);
+                    if (time_limit(time)){
+                        *p_current_state = CLOSED_EMPTY;
+                    }
                     break;
                 default:
                     *p_current_state = BLOCKED_EMPTY;
@@ -209,7 +221,11 @@ void FSM_transition(FSM_State* p_current_state, FSM_Trigger trigger, Queue* p_ma
         case BLOCKED_UNEMPTY: 
             switch(trigger){
                 case TIMER:
-                    // do something
+                    // waits for obstr release
+                    // start_timer(time);
+                    if (time_limit(time)){
+                        *p_current_state = CLOSED_UNEMPTY;
+                    }
                     break;
                 default:
                     *p_current_state = BLOCKED_UNEMPTY;

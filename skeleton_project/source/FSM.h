@@ -2,9 +2,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
-#include <time.h>
 #include "driver/elevio.h"
 #include "queue.h"
+#include "timer.h"
 
 typedef enum FSM_State {
     UP_EMPTY,
@@ -36,4 +36,4 @@ typedef enum FSM_Trigger {
 // functions
 FSM_State* FSM_init(void);
 void FSM_behaviour(FSM_State* p_current_state);
-void FSM_transition(FSM_State* p_current_state, FSM_Trigger trigger, Queue* p_main_queue);
+void FSM_transition(FSM_State* p_current_state, FSM_Trigger trigger, Queue* p_main_queue, time_t* start_time);
