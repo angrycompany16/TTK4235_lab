@@ -9,6 +9,8 @@ typedef struct {
     bool was_just_released;
 } Button;
 
-Button* init_button();
+Button* button_init();
+
+void button_deinit(Button* button);
 
 void button_update(Button* button, bool value);

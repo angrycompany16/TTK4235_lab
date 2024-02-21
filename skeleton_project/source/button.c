@@ -1,6 +1,6 @@
 #include "button.h"
 
-Button* init_button() {
+Button* button_init() {
     Button* p_button = (Button*)malloc(sizeof(Button));
     if (p_button != NULL) {
         p_button->pressed = false;
@@ -9,6 +9,10 @@ Button* init_button() {
     }
 
     return p_button;
+}
+
+void button_deinit(Button* button) {
+    free(button);
 }
 
 void button_update(Button* button, bool value) {

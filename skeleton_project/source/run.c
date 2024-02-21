@@ -11,10 +11,6 @@ void run(
     
     // button_update(p_button_2_up, false);
 
-    // printf("%d\n", pp_up_buttons[0]->pressed);
-    // printf("%d\n", pp_up_buttons[0]->was_just_pressed);
-    // printf("%d\n", pp_up_buttons[0]->was_just_released);
-
     for (size_t i = 0; i < 4; i++) {
         button_update(pp_up_buttons[i], elevio_callButton(i, BUTTON_HALL_UP));
         button_update(pp_down_buttons[i], elevio_callButton(i, BUTTON_HALL_DOWN));
