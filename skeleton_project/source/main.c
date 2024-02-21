@@ -14,11 +14,13 @@ int main() {
 
     Queue* p_main_queue = queue_init();
     int target_floor = 0;
-
-    Button* p_button_2_up = init_button();
+    // Button* p_button_2_up = init_button();
+    Button* up_buttons[] = { init_button(), init_button(), init_button(), init_button() };
+    Button* down_buttons[] = { init_button(), init_button(), init_button(), init_button() };
+    Button* cab_buttons[] = { init_button(), init_button(), init_button(), init_button() };
 
     while(1) {
-        run(&target_floor, p_main_queue);
+        run(&target_floor, p_main_queue, up_buttons, down_buttons, cab_buttons);
 
         if (elevio_stopButton()) {
             break;

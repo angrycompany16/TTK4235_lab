@@ -6,7 +6,7 @@
 #include "driver/elevio.h"
 
 // enums
-typedef enum State {
+typedef enum {
     UP_EMPTY,
     UP_UNEMPTY,
 
@@ -23,7 +23,7 @@ typedef enum State {
     CLOSED_UNEMPTY
 } State;
 
-typedef enum Trigger {
+typedef enum {
     STOP,
     ENTERED_FLOOR,
     OBSTRUCTION,

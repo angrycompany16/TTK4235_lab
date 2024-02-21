@@ -3,9 +3,8 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-typedef struct Button {
-    bool is_pressed;
-    bool was_pressed;
+typedef struct {
+    bool pressed;
     bool was_just_pressed;
     bool was_just_released;
 } Button;

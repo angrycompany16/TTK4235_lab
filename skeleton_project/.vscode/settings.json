@@ -2,6 +2,8 @@
     "files.associations": {
         "elevio.h": "c",
         "run.h": "c",
-        "time.h": "c"
+        "time.h": "c",
+        "button.h": "c",
+        "stdio.h": "c"
     }
 }
