@@ -4,12 +4,13 @@
 #include <time.h>
 #include <unistd.h>
 #include "driver/elevio.h"
-#include "state_machine.h"
+#include "FSM.h"
 #include "queue.h"
 #include "run.h"
 #include "button.h"
 
 int main() {
+
     elevio_init();
 
     Queue* p_main_queue = queue_init();
