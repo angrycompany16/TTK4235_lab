@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-typedef struct Request {
+typedef struct {
     int floor;
     bool up;
     bool off;

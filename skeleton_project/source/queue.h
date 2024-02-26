@@ -6,7 +6,7 @@
 
 #define MAX_QUEUE_SIZE 100
 
-typedef struct Queue {
+typedef struct {
     Request queue[MAX_QUEUE_SIZE];
     size_t last_queue_element;
 } Queue;

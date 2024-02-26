@@ -6,31 +6,35 @@
 #include "driver/elevio.h"
 #include "state_machine.h"
 #include "queue.h"
+#include "run.h"
+#include "button.h"
 
-
-int main(){
-
-    /*
+int main() {
     elevio_init();
 
     Queue* p_main_queue = queue_init();
+    int target_floor = 0;
 
-    queue_add(p_main_queue, (Request){2, true, true});
-    queue_add(p_main_queue, (Request){1, false, false});
-    queue_add(p_main_queue, (Request){1, true, false});
-    queue_add(p_main_queue, (Request){4, true, false});
-    queue_add(p_main_queue, (Request){4, true, false});
-    
-    printf(queue_has_off_requests(p_main_queue) ? "has off requests\n" : "has no off requests\n");
-    printf(queue_query(p_main_queue, true, false) ? "has query matches\n" : "has no query matches\n");
+    Button* up_buttons[] = { button_init(), button_init(), button_init(), button_init() };
+    Button* down_buttons[] = { button_init(), button_init(), button_init(), button_init() };
+    Button* cab_buttons[] = { button_init(), button_init(), button_init(), button_init() };
 
-    sleep(1);
+    while(1) {
+        run(&target_floor, p_main_queue, up_buttons, down_buttons, cab_buttons);
 
-    queue_print(p_main_queue);
-
+        if (elevio_stopButton()) {
+            break;
+        }
+        
         nanosleep(&(struct timespec){0, 20*1000*1000}, NULL);
     }
-    */
+    
+    queue_deinit(p_main_queue);
+    for (int i = 0; i < 4; i++) {
+        button_deinit(up_buttons[i]);
+        button_deinit(down_buttons[i]);
+        button_deinit(cab_buttons[i]);
+    }
 
     return 0;
 

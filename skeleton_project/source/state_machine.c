@@ -1,7 +1,7 @@
 #include "state_machine.h"
 
 void behaviour(State* p_current_state){
-
+    
     switch(*p_current_state) {
         // RETNING FULLHET DØR OBSTRUKSJON
         case UP_EMPTY:
