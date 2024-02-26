@@ -1,136 +1,163 @@
 #include "FSM.h"
 #include "timer.h"
 
-FSM_State* FSM_init(){
+FSM* FSM_init(){
 
-    FSM_State* p_current_state;
+    FSM* p_fsm = (FSM*)malloc(sizeof(FSM));
 
-    *p_current_state = CLOSED_EMPTY;
+    if (p_fsm!= NULL) {
+        p_fsm->current_state = CLOSED_EMPTY;
+        p_fsm->current_floor = 2;
+        p_fsm->moving = false;
+    } else {
+        printf("Error allocating memory for button\n");
+    }
 
-    return p_current_state;
+    return p_fsm;
 }
 
-void FSM_behaviour(FSM_State* p_current_state){
+void FSM_deinit(FSM* p_fsm) {
+    free(p_fsm);
+}
+
+void FSM_behaviour(FSM* p_fsm, time_t* p_timer, Queue* p_main_queue){
 
     // Ikke tatt hensyn til Stop (timer-cases) og Obstruction enda
 
-    switch(*p_current_state) {
-        // RETNING FULLHET DØR OBSTRUKSJON
-
+    switch(p_fsm->current_state) {
         case UP_EMPTY:
-            // opp tom lukket false
+            p_fsm->moving = true;
             elevio_motorDirection(DIRN_UP);
             elevio_doorOpenLamp(0);
             break;
         case UP_UNEMPTY:
-            // opp utom lukket false
+            p_fsm->moving = true;
             elevio_motorDirection(DIRN_UP);
             elevio_doorOpenLamp(0);
             break;
         case DOWN_EMPTY:
-            // ned tom lukket false
+            p_fsm->moving = true;
             elevio_motorDirection(DIRN_DOWN);
             elevio_doorOpenLamp(0);
             break;
         case DOWN_UNEMPTY:
-            // ned utom lukket false
+            p_fsm->moving = true;
             elevio_motorDirection(DIRN_DOWN);
             elevio_doorOpenLamp(0);
             break;
         case OPEN_EMPTY:
-            // stille tom åpen false
+            if (time_limit(p_timer)){
+                printf("timer empty\n");
+                FSM_transition(p_fsm, TIMER, p_main_queue, p_timer);
+            }
+            p_fsm->moving = false;
             elevio_motorDirection(DIRN_STOP);
             elevio_doorOpenLamp(1);
             break;
         case OPEN_UNEMPTY: 
-            // stille utom åpen false
+            if (time_limit(p_timer)){
+                printf("timer unempty\n");
+                FSM_transition(p_fsm, TIMER, p_main_queue, p_timer);
+            }
+            p_fsm->moving = false;
             elevio_motorDirection(DIRN_STOP);
             elevio_doorOpenLamp(1);
             break;
         case CLOSED_EMPTY:
-            // stille tom lukket false
+            p_fsm->moving = false;
             elevio_motorDirection(DIRN_STOP);
             elevio_doorOpenLamp(0);
             break;
         case CLOSED_UNEMPTY:
-            // stille utom lukket false
+            p_fsm->moving = false;
             elevio_motorDirection(DIRN_STOP);
             elevio_doorOpenLamp(0);
             break;
         case BLOCKED_EMPTY:
-            // stille tom åpen true
+            p_fsm->moving = false;
             elevio_motorDirection(DIRN_STOP);
             elevio_doorOpenLamp(1);
             break;
         case BLOCKED_UNEMPTY:
-            // stille utom åpen true
+            p_fsm->moving = false;
             elevio_motorDirection(DIRN_STOP);
             elevio_doorOpenLamp(1);
             break;
     }
 }
 
-void FSM_transition(FSM_State* p_current_state, FSM_Trigger trigger, Queue* p_main_queue, time_t* time){
+void FSM_transition(FSM* p_fsm, FSM_Trigger trigger, Queue* p_main_queue, time_t* p_timer){    
 
-    switch(*p_current_state) {
+    switch(p_fsm->current_state) {
 
         case UP_EMPTY: 
             switch(trigger){
-                case STOP:
-                    *p_current_state = OPEN_UNEMPTY;
+                case ENTERED_FLOOR: 
+                    queue_remove_all(p_main_queue, elevio_floorSensor());
+                    p_fsm->current_state = OPEN_UNEMPTY;
+                    reset_timer(p_timer);
+
                     break;
                 default:
-                    *p_current_state = UP_EMPTY;
+                    p_fsm->current_state = UP_EMPTY;
             }
             break;
 
         case UP_UNEMPTY: 
             switch(trigger){
                 case STOP:
-                    *p_current_state = CLOSED_UNEMPTY;
+                    p_fsm->current_state = CLOSED_UNEMPTY;
                     break;
                 case ENTERED_FLOOR: 
                     queue_remove_all(p_main_queue, elevio_floorSensor());
 
                     if (queue_has_off_requests(p_main_queue)){
-                        *p_current_state = CLOSED_UNEMPTY;
+                        reset_timer(p_timer);
+                        p_fsm->current_state = OPEN_UNEMPTY;
                     } else {
-                        *p_current_state = CLOSED_EMPTY;
+                        reset_timer(p_timer);
+                        p_fsm->current_state = OPEN_EMPTY;
                     }
 
                     break;
                 default:
-                    *p_current_state = UP_UNEMPTY;
-            }
+                    p_fsm->current_state = UP_UNEMPTY;
+            }reset_timer(p_timer);
             break;
         
         case DOWN_EMPTY: 
             switch(trigger){
                 case ENTERED_FLOOR: 
-                    *p_current_state = OPEN_UNEMPTY;
+                    p_fsm->current_state = OPEN_UNEMPTY;
+                    queue_remove_all(p_main_queue, elevio_floorSensor());
+                    reset_timer(p_timer);
+
                     break;
                 default:
-                    *p_current_state = DOWN_EMPTY;
+                    printf("default\n");
+                    p_fsm->current_state = DOWN_EMPTY;
             }
             break;
         
         case DOWN_UNEMPTY: 
             switch(trigger){
                 case STOP:
-                    *p_current_state = CLOSED_UNEMPTY;
+                    p_fsm->current_state = CLOSED_UNEMPTY;
                     break;
                 case ENTERED_FLOOR: 
                     queue_remove_all(p_main_queue, elevio_floorSensor());
 
                     if (queue_has_off_requests(p_main_queue)){
-                        *p_current_state = CLOSED_UNEMPTY;
+                        reset_timer(p_timer);
+                        p_fsm->current_state = OPEN_UNEMPTY;
                     } else {
-                        *p_current_state = CLOSED_EMPTY;
+                        reset_timer(p_timer);
+                        p_fsm->current_state = OPEN_EMPTY;
                     }
 
                     break;
                 default:
-                    *p_current_state = DOWN_UNEMPTY;
+                    p_fsm->current_state = DOWN_UNEMPTY;
             }
             break;
         
@@ -140,49 +167,49 @@ void FSM_transition(FSM_State* p_current_state, FSM_Trigger trigger, Queue* p_ma
                     // do something
                     break;
                 case TIMER:
-                    // implement waiting for stop-button release before starting timer
-                    //start_timer(time);
-                    if (time_limit(time)){
-                        *p_current_state = CLOSED_EMPTY;
-                    }
+                    // TODO: implement waiting for stop-button release before starting timer
+                    p_fsm->current_state = CLOSED_EMPTY;
                     break;
                 default:
-                    *p_current_state = OPEN_EMPTY;
+                    p_fsm->current_state = OPEN_EMPTY;
+                    // reset_timer(p_timer);
             }
             break;
 
         case OPEN_UNEMPTY: 
             switch(trigger){
                 case STOP:
-                    *p_current_state = OPEN_EMPTY;
+                    p_fsm->current_state = OPEN_EMPTY;
+                    reset_timer(p_timer);
+
                     break;
                 case OBSTRUCTION:
                     // do something
                     break;
                 case TIMER:
-                    start_timer(time);
-                    if (time_limit(time)){
-                        *p_current_state = CLOSED_UNEMPTY;
-                    }
+                    p_fsm->current_state = CLOSED_UNEMPTY;
                     break;
                 default:
-                    *p_current_state = OPEN_UNEMPTY;
+                    p_fsm->current_state = OPEN_UNEMPTY;
             }
             break;
 
         case CLOSED_EMPTY: 
             switch(trigger){
                 case UP:
-                    *p_current_state = UP_EMPTY;
+                    p_fsm->current_state = UP_EMPTY;
                     break;
                 case DOWN:
-                    *p_current_state = DOWN_EMPTY;
+                    p_fsm->current_state = DOWN_EMPTY;
                     break;
                 case STAY:
-                    *p_current_state = OPEN_UNEMPTY;
+                    p_fsm->current_state = OPEN_UNEMPTY;
+                    reset_timer(p_timer);
+                    queue_remove_all(p_main_queue, elevio_floorSensor());
+
                     break;
                 default:
-                    *p_current_state = CLOSED_EMPTY;
+                    p_fsm->current_state = CLOSED_EMPTY;
             }
             break;
         
@@ -190,17 +217,23 @@ void FSM_transition(FSM_State* p_current_state, FSM_Trigger trigger, Queue* p_ma
             switch(trigger){
                 case STOP:
                     if (elevio_floorSensor()!=-1){
-                        *p_current_state = OPEN_EMPTY;
+                        p_fsm->current_state = OPEN_EMPTY;
+                        reset_timer(p_timer);
                     }
                     break;
                 case UP:
-                    *p_current_state = UP_UNEMPTY;
+                    p_fsm->current_state = UP_UNEMPTY;
                     break;
                 case DOWN:
-                    *p_current_state = DOWN_UNEMPTY;
+                    p_fsm->current_state = DOWN_UNEMPTY;
+                    break;
+                case STAY:
+                    p_fsm->current_state = OPEN_UNEMPTY;
+                    reset_timer(p_timer);
+                    queue_remove_all(p_main_queue, elevio_floorSensor());
                     break;
                 default:
-                    *p_current_state = CLOSED_UNEMPTY;
+                    p_fsm->current_state = CLOSED_UNEMPTY;
             }
             break;
         
@@ -209,12 +242,12 @@ void FSM_transition(FSM_State* p_current_state, FSM_Trigger trigger, Queue* p_ma
                 case TIMER:
                     // waits for obstr release
                     // start_timer(time);
-                    if (time_limit(time)){
-                        *p_current_state = CLOSED_EMPTY;
-                    }
+                    // if (time_limit(time)){
+                    //     p_fsm->current_state = CLOSED_EMPTY;
+                    // }
                     break;
                 default:
-                    *p_current_state = BLOCKED_EMPTY;
+                    p_fsm->current_state = BLOCKED_EMPTY;
             }
             break;
 
@@ -223,12 +256,12 @@ void FSM_transition(FSM_State* p_current_state, FSM_Trigger trigger, Queue* p_ma
                 case TIMER:
                     // waits for obstr release
                     // start_timer(time);
-                    if (time_limit(time)){
-                        *p_current_state = CLOSED_UNEMPTY;
-                    }
+                    // if (time_limit(time)){
+                    //     p_fsm->current_state = CLOSED_UNEMPTY;
+                    // }
                     break;
                 default:
-                    *p_current_state = BLOCKED_UNEMPTY;
+                    p_fsm->current_state = BLOCKED_UNEMPTY;
             }
             break;
     }

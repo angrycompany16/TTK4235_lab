@@ -1,22 +1,32 @@
 #include "timer.h"
 
-/*
-// ikke peker
-time_t start_time;
+time_t* timer_init(){
+    time_t* p_timer = (time_t*)malloc(sizeof(time_t));
 
-void start_timer(){
-    start_time = time(NULL);
+    if (p_timer != NULL) {
+        *p_timer = time(NULL);
+    } else {
+        printf("Error allocating memory for timer\n");
+    }
+
+    return p_timer;
 }
 
-bool time_limit(){
-    return (difftime(time(NULL), start_time) >= 3);
-}
-*/
-
-void start_timer(time_t* start_time){
-    *start_time = time(NULL);
+void timer_deinit(time_t* p_timer){
+    free(p_timer);
 }
 
-bool time_limit(time_t* start_time){
-    return (difftime(time(NULL), *start_time) >= 3);
+void reset_timer(time_t* p_timer){
+    *p_timer = time(NULL);
+}
+
+// checks whether the timer has ran out of time and resets it if so
+bool time_limit(time_t* p_timer){
+    return (difftime(time(NULL), *p_timer) >= 3);
+    
+    
+    //     reset_timer(p_timer);
+    //     return true;
+    // } 
+    // return false;
 }

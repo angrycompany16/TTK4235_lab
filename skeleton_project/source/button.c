@@ -6,6 +6,8 @@ Button* button_init() {
         p_button->pressed = false;
         p_button->was_just_pressed = true;
         p_button->was_just_released = false;
+    } else {
+        printf("Error allocating memory for button\n");
     }
 
     return p_button;

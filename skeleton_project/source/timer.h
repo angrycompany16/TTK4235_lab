@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
-void start_timer(time_t* start_time);
-bool time_limit(time_t* start_time);
+time_t* timer_init();
+void timer_deinit(time_t* p_timer);
+void reset_timer(time_t* p_timer);
+bool time_limit(time_t* p_timer);

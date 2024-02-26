@@ -4,6 +4,8 @@
         "run.h": "c",
         "time.h": "c",
         "button.h": "c",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "queue.h": "c",
+        "stdlib.h": "c"
     }
 }

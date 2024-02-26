@@ -8,7 +8,7 @@
 
 typedef struct {
     Request queue[MAX_QUEUE_SIZE];
-    size_t last_queue_element;
+    size_t youngest_queue_element;
 } Queue;
 
 Queue* queue_init(void);
@@ -26,3 +26,5 @@ void queue_print(Queue* p_queue);
 bool queue_has_off_requests(Queue* p_queue);
 
 bool queue_query(Queue* p_queue, bool up, bool off);
+
+Request* queue_find_first_off_request(Queue* p_queue);

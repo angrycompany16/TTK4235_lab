@@ -3,69 +3,74 @@
 void run(
     int* target_floor, 
     Queue* p_main_queue, 
+    FSM* p_fsm,
+    time_t* p_timer,
     Button** pp_up_buttons, 
     Button** pp_down_buttons, 
     Button** pp_cab_buttons
 ) {
-    // Setup elevator
-    
-    // button_update(p_button_2_up, false);
-
     for (size_t i = 0; i < 4; i++) {
         button_update(pp_up_buttons[i], elevio_callButton(i, BUTTON_HALL_UP));
         button_update(pp_down_buttons[i], elevio_callButton(i, BUTTON_HALL_DOWN));
         button_update(pp_cab_buttons[i], elevio_callButton(i, BUTTON_CAB));
     }
 
-
-    // printf("%d\n", pp_up_buttons[0]->was_just_pressed);
-
-    if (pp_cab_buttons[3]->was_just_pressed) {
-        printf("4th floor cab button pressed\n");
-    }
-
-    // button_update(p_button_2_up, elevio_callButton(2, BUTTON_HALL_UP));
-    // if (elevio_callButton(2, BUTTON_HALL_UP)) {
-    // }
-    // sleep(0.001);
-
-    // printf("%d\n", elevio_callButton(2, BUTTON_HALL_UP));
-
-    // if (p_button_2_up->was_just_pressed) {
-        
-    //     // queue_add(p_main_queue, (Request) {2, false, false});
-    //     printf("Button just pressed\n");
-    //     // queue_print(p_main_queue);
-    // }
-
-    // if (p_button_2_up->was_just_released) {
-        
-    //     // queue_add(p_main_queue, (Request) {2, false, false});
-    //     printf("Button just released\n");
-    //     // queue_print(p_main_queue);
-    // }
-
-    /*
     for (int i = 0; i < 4; i++) {
-        if (elevio_callButton(i, BUTTON_HALL_DOWN)) {
+        if (pp_down_buttons[i]->was_just_pressed) {
             queue_add(p_main_queue, (Request) {i, false, false});
             queue_print(p_main_queue);
         }
 
-        if (elevio_callButton(i, BUTTON_HALL_UP)) {
+        if (pp_up_buttons[i]->was_just_pressed) {
             queue_add(p_main_queue, (Request) {i, true, false});
             queue_print(p_main_queue);
         }
 
-        if (elevio_callButton(i, BUTTON_CAB)) {
+        if (pp_cab_buttons[i]->was_just_pressed) {
             if (i > elevio_floorSensor()) {
                 queue_add(p_main_queue, (Request) {i, true, true});
                 queue_print(p_main_queue);
             } else if (i < elevio_floorSensor()) {
-                queue_add(p_main_queue, (Request) {i, true, false});
-               queue_print(p_main_queue);
+                queue_add(p_main_queue, (Request) {i, false, true});
+                queue_print(p_main_queue);
             }
         }
     }
-    */
+
+    if (!p_fsm->moving) {
+        if (queue_has_off_requests(p_main_queue)) {
+            *target_floor = queue_find_first_off_request(p_main_queue)->floor;
+        } else { 
+            if (p_main_queue->youngest_queue_element != 0) {
+                *target_floor = p_main_queue->queue[0].floor;
+            } else {
+                *target_floor = -1;
+            }
+        }
+
+        if (*target_floor == -1) {
+            // do nothing
+        } else if (*target_floor < p_fsm->current_floor) {
+            FSM_transition(p_fsm, DOWN, p_main_queue, p_timer);
+        } else if (*target_floor > p_fsm->current_floor) {
+            FSM_transition(p_fsm, UP, p_main_queue, p_timer);
+        } else {
+            FSM_transition(p_fsm, STAY, p_main_queue, p_timer);
+        }
+    } else {
+        // printf("Floor sensor: %d\n", elevio_floorSensor());
+        if (elevio_floorSensor() != -1) {
+            p_fsm->current_floor = elevio_floorSensor();
+        }
+        
+        if (*target_floor == elevio_floorSensor()) {
+            // TODO: also make elevator stop when someone enters in the same direction
+            FSM_transition(p_fsm, ENTERED_FLOOR, p_main_queue, p_timer);
+        }
+    }
+
+    FSM_behaviour(p_fsm, p_timer, p_main_queue);
+
+    // queue_print(p_main_queue);
+    printf("Current state: %d\n", p_fsm->current_state);
 }
