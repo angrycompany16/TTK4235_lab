@@ -6,62 +6,36 @@
 #include "driver/elevio.h"
 #include "FSM.h"
 #include "queue.h"
-#include "timer.h"
+#include "run.h"
+#include "button.h"
 
+int main() {
 
-int main(){
-
-    /*
-    // test av timer
-    time_t start_time;
-
-    printf("Starting timer");
-    start_timer(&start_time);
-    
-    while(!time_limit(&start_time)){
-        printf("ikke enda");
-    }
-
-    printf("der ja");
-    */
-
-    /*
     elevio_init();
 
     Queue* p_main_queue = queue_init();
+    int target_floor = 0;
+
+    Button* up_buttons[] = { button_init(), button_init(), button_init(), button_init() };
+    Button* down_buttons[] = { button_init(), button_init(), button_init(), button_init() };
+    Button* cab_buttons[] = { button_init(), button_init(), button_init(), button_init() };
 
     while(1) {
-        run();
-        nanosleep(&(struct timespec){0, 20*1000*1000}, NULL);
+        run(&target_floor, p_main_queue, up_buttons, down_buttons, cab_buttons);
 
         if (elevio_stopButton()) {
             break;
         }
+        
+        nanosleep(&(struct timespec){0, 20*1000*1000}, NULL);
     }
     
     queue_deinit(p_main_queue);
-    */
-
-    /*
-    elevio_init();
-
-    Queue* p_main_queue = queue_init();
-
-    queue_add(p_main_queue, (Request){2, true, true});
-    queue_add(p_main_queue, (Request){1, false, false});
-    queue_add(p_main_queue, (Request){1, true, false});
-    queue_add(p_main_queue, (Request){4, true, false});
-    queue_add(p_main_queue, (Request){4, true, false});
-    
-    printf(queue_has_off_requests(p_main_queue) ? "has off requests\n" : "has no off requests\n");
-    printf(queue_query(p_main_queue, true, false) ? "has query matches\n" : "has no query matches\n");
-
-    sleep(1);
-
-    queue_print(p_main_queue);
-
-    nanosleep(&(struct timespec){0, 20*1000*1000}, NULL);
-    */
+    for (int i = 0; i < 4; i++) {
+        button_deinit(up_buttons[i]);
+        button_deinit(down_buttons[i]);
+        button_deinit(cab_buttons[i]);
+    }
 
     return 0;
 

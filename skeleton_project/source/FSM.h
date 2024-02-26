@@ -6,7 +6,8 @@
 #include "queue.h"
 #include "timer.h"
 
-typedef enum FSM_State {
+// enums
+typedef enum {
     UP_EMPTY,
     UP_UNEMPTY,
 
@@ -23,7 +24,7 @@ typedef enum FSM_State {
     CLOSED_UNEMPTY
 } FSM_State;
 
-typedef enum FSM_Trigger {
+typedef enum {
     STOP,
     ENTERED_FLOOR,
     OBSTRUCTION,
