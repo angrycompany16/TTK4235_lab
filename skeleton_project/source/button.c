@@ -29,7 +29,3 @@ void button_update(Button* button, bool value) {
 
     button->pressed = value;
 }
-
-
-
-

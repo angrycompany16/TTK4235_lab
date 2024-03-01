@@ -1,5 +1,4 @@
 #include "FSM.h"
-#include "timer.h"
 
 FSM* FSM_init(){
 
@@ -96,7 +95,6 @@ void FSM_transition(FSM* p_fsm, FSM_Trigger trigger, Queue* p_main_queue, time_t
                     queue_remove_all(p_main_queue, elevio_floorSensor());
                     p_fsm->current_state = OPEN_UNEMPTY;
                     reset_timer(p_timer);
-
                     break;
                 default:
                     p_fsm->current_state = UP_EMPTY;
@@ -110,7 +108,6 @@ void FSM_transition(FSM* p_fsm, FSM_Trigger trigger, Queue* p_main_queue, time_t
                     break;
                 case ENTERED_FLOOR: 
                     queue_remove_all(p_main_queue, elevio_floorSensor());
-
                     if (queue_has_off_requests(p_main_queue)){
                         reset_timer(p_timer);
                         p_fsm->current_state = OPEN_UNEMPTY;
@@ -118,11 +115,10 @@ void FSM_transition(FSM* p_fsm, FSM_Trigger trigger, Queue* p_main_queue, time_t
                         reset_timer(p_timer);
                         p_fsm->current_state = OPEN_EMPTY;
                     }
-
                     break;
                 default:
                     p_fsm->current_state = UP_UNEMPTY;
-            }reset_timer(p_timer);
+            } reset_timer(p_timer);
             break;
         
         case DOWN_EMPTY: 
@@ -131,7 +127,6 @@ void FSM_transition(FSM* p_fsm, FSM_Trigger trigger, Queue* p_main_queue, time_t
                     p_fsm->current_state = OPEN_UNEMPTY;
                     queue_remove_all(p_main_queue, elevio_floorSensor());
                     reset_timer(p_timer);
-
                     break;
                 default:
                     printf("default\n");
@@ -146,7 +141,6 @@ void FSM_transition(FSM* p_fsm, FSM_Trigger trigger, Queue* p_main_queue, time_t
                     break;
                 case ENTERED_FLOOR: 
                     queue_remove_all(p_main_queue, elevio_floorSensor());
-
                     if (queue_has_off_requests(p_main_queue)){
                         reset_timer(p_timer);
                         p_fsm->current_state = OPEN_UNEMPTY;
@@ -154,7 +148,6 @@ void FSM_transition(FSM* p_fsm, FSM_Trigger trigger, Queue* p_main_queue, time_t
                         reset_timer(p_timer);
                         p_fsm->current_state = OPEN_EMPTY;
                     }
-
                     break;
                 default:
                     p_fsm->current_state = DOWN_UNEMPTY;
@@ -181,7 +174,6 @@ void FSM_transition(FSM* p_fsm, FSM_Trigger trigger, Queue* p_main_queue, time_t
                 case STOP:
                     p_fsm->current_state = OPEN_EMPTY;
                     reset_timer(p_timer);
-
                     break;
                 case OBSTRUCTION:
                     // do something
@@ -206,7 +198,6 @@ void FSM_transition(FSM* p_fsm, FSM_Trigger trigger, Queue* p_main_queue, time_t
                     p_fsm->current_state = OPEN_UNEMPTY;
                     reset_timer(p_timer);
                     queue_remove_all(p_main_queue, elevio_floorSensor());
-
                     break;
                 default:
                     p_fsm->current_state = CLOSED_EMPTY;
