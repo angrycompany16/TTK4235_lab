@@ -19,11 +19,13 @@ void run(
         if (pp_down_buttons[i]->was_just_pressed) {
             queue_add(p_main_queue, (Request) {i, false, false});
             queue_print(p_main_queue);
+            lamp_toggle(LAMP_DOWN, i, true);
         }
 
         if (pp_up_buttons[i]->was_just_pressed) {
             queue_add(p_main_queue, (Request) {i, true, false});
             queue_print(p_main_queue);
+            lamp_toggle(LAMP_UP, i, true);
         }
 
         if (pp_cab_buttons[i]->was_just_pressed) {
@@ -34,6 +36,7 @@ void run(
                 queue_add(p_main_queue, (Request) {i, false, true});
                 queue_print(p_main_queue);
             }
+            lamp_toggle(LAMP_CAB, i, true);
         }
     }
 

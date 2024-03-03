@@ -5,6 +5,7 @@
 #include "driver/elevio.h"
 #include "queue.h"
 #include "timer.h"
+#include "lamp.h"
 
 // enums
 typedef enum {
