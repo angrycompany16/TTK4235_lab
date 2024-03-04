@@ -3,7 +3,6 @@
 Queue* queue_init() {
     Queue* p_queue = (Queue*)malloc(sizeof(Queue));
 
-    // maybe not necessary?
     if (p_queue == NULL) {
         printf("Queue object could not be made\n");
         exit(EXIT_FAILURE);
@@ -44,6 +43,13 @@ void queue_remove_all(Queue* p_queue, int floor) {
     }
 }
 
+void queue_clear(Queue* p_queue) {
+    for (size_t i = 0; i < p_queue->youngest_queue_element; i++) {
+        queue_remove(p_queue, i);
+        i--;
+    }
+}
+
 void queue_print(Queue* p_queue) {
     printf("Printing queue...\n");
     for (size_t i = 0; i < p_queue->youngest_queue_element; i++) {
@@ -51,22 +57,70 @@ void queue_print(Queue* p_queue) {
     }
 }
 
-bool queue_has_off_requests(Queue* p_queue) {
+// bool queue_has_off_requests(Queue* p_queue) {
+//     for (size_t i = 0; i < p_queue->youngest_queue_element; i++) {
+//         if (p_queue->queue[i].off == true) {
+//             return true;
+//         }
+//     }
+//     return false;
+// }
+
+bool queue_query(Queue* p_queue, int floor, QueueQueryItem direction, QueueQueryItem off) {
+    if (floor == -1) {
+        if (direction == ANY) {
+            return queue_query_off(p_queue, off);
+        } else {
+            if (off == ANY) {
+                return queue_query_direction(p_queue, direction);
+            } else {
+                return queue_query_off(p_queue, off) && queue_query_direction(p_queue, direction);
+            }
+        }
+    } else {
+        if (direction == ANY) {
+            if (off == ANY) {
+                return queue_query_floor(p_queue, floor);
+            } else {
+                return queue_query_floor(p_queue, floor) && queue_query_off(p_queue, off);
+            }
+        } else {
+            if (off == ANY) {
+                return queue_query_floor(p_queue, floor) && queue_query_direction(p_queue, direction);
+            } else {
+                return queue_query_floor(p_queue, floor) && queue_query_off(p_queue, off) && queue_query_direction(p_queue, direction);
+            }
+        }
+    }
+    return false;
+}
+
+static bool queue_query_floor(Queue* p_queue, int floor) {
     for (size_t i = 0; i < p_queue->youngest_queue_element; i++) {
-        if (p_queue->queue[i].off == true) {
+        if (p_queue->queue[i].floor == floor) {
             return true;
         }
     }
     return false;
 }
 
-bool queue_query(Queue* p_queue, bool up, bool off) {
+static bool queue_query_direction(Queue* p_queue, bool direction) {
     for (size_t i = 0; i < p_queue->youngest_queue_element; i++) {
-        if (p_queue->queue[i].off == off && p_queue->queue[i].up == up) {
+        if (p_queue->queue[i].direction == direction) {
             return true;
-        } 
+        }
     }
     return false;
+}
+
+static bool queue_query_off(Queue* p_queue, bool off) {
+    for (size_t i = 0; i < p_queue->youngest_queue_element; i++) {
+        if (p_queue->queue[i].off == off) {
+            return true;
+        }
+    }
+    return false;
+
 }
 
 Request* queue_find_first_off_request(Queue* p_queue) {

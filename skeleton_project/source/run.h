@@ -13,6 +13,7 @@ void run(
     Queue* p_main_queue, 
     FSM* p_current_state,
     time_t* p_timer,
+    Button* p_stop_button,
     Button** pp_up_buttons, 
     Button** pp_down_buttons, 
     Button** pp_cab_buttons

@@ -34,9 +34,16 @@ typedef enum {
     STAY
 } FSM_Trigger;
 
+typedef enum {
+    DIR_NONE = -1,
+    DIR_DOWN,
+    DIR_UP,
+} ELEVATOR_DIRECTION;
+
 typedef struct {
     FSM_State current_state;
     int current_floor;
+    int direction;
     bool moving;
 } FSM;
 
