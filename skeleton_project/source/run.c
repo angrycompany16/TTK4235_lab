@@ -10,6 +10,7 @@ void run(
     Button** pp_down_buttons, 
     Button** pp_cab_buttons
 ) {
+    int current_floor = elevio_floorSensor();
     button_update(p_stop_button, elevio_stopButton());
 
     for (size_t i = 0; i < 4; i++) {
@@ -20,8 +21,10 @@ void run(
 
     if (p_stop_button->was_just_pressed) {
         FSM_transition(p_fsm, STOP, p_main_queue, p_timer);
-        // queue_query_floor(p_main_queue, 2);
-    }
+        lamp_toggle(LAMP_STOP, -1, true);
+    } 
+
+    if (p_stop_button->was_just_released) { lamp_toggle(LAMP_STOP, -1, false); }
 
     if (p_stop_button->pressed) { reset_timer(p_timer); }
 
@@ -46,10 +49,10 @@ void run(
         }
 
         if (pp_cab_buttons[i]->was_just_pressed) {
-            if (i > elevio_floorSensor()) {
+            if (i > current_floor) {
                 queue_add(p_main_queue, (Request) {i, true, true});
                 queue_print(p_main_queue);
-            } else if (i < elevio_floorSensor()) {
+            } else if (i < current_floor) {
                 queue_add(p_main_queue, (Request) {i, false, true});
                 queue_print(p_main_queue);
             }
@@ -78,34 +81,37 @@ void run(
             FSM_transition(p_fsm, STAY, p_main_queue, p_timer);
         }
     } else {
-        // printf("Floor sensor: %d\n", elevio_floorSensor());
-        if (elevio_floorSensor() != -1) {
-            p_fsm->current_floor = elevio_floorSensor();
+        // printf("Floor sensor: %d\n", current_floor);
+        if (current_floor != -1) {
+            p_fsm->current_floor = current_floor;
             // Oppdatere current-lys (cursed løsning? hehe)
-            lamp_toggle(LAMP_CURRENT, p_fsm->current_floor, true);
+            lamp_toggle(LAMP_CURRENT, current_floor, true);
 
-            if (*target_floor > p_fsm->current_floor){ // beveger seg oppover
-                lamp_toggle(LAMP_CURRENT, p_fsm->current_floor - 1, false);
-            } else {
-                lamp_toggle(LAMP_CURRENT, p_fsm->current_floor + 1, false);
-            }
+            // if (*target_floor > p_fsm->current_floor){ // beveger seg oppover
+            
+            // } else {
+            //     lamp_toggle(LAMP_CURRENT, p_fsm->current_floor + 1, false);
+            // }
             // evt:
             // lamp_toggle(LAMP_CURRENT, p_fsm->current_floor + 1, false);
             // lamp_toggle(LAMP_CURRENT, p_fsm->current_floor - 1, false);
-            if (queue_query(p_main_queue, elevio_floorSensor(), p_fsm->direction, ANY)) {
+
+            // printf("%d     ", current_floor);
+
+            if (queue_query(p_main_queue, current_floor, p_fsm->direction, ANY)) {
                 FSM_transition(p_fsm, ENTERED_FLOOR, p_main_queue, p_timer);
             }
         }
 
-        if (*target_floor == elevio_floorSensor()) {
+        if (*target_floor == current_floor) {
             // TODO: also make elevator stop when someone enters in the same direction
             // men er dette riktig sted da?
 
-            if ((*target_floor > p_fsm->current_floor) && queue_query(p_main_queue, true, false)){
-                FSM_transition(p_fsm, ENTERED_FLOOR, p_main_queue, p_timer);
-            } else if ((*target_floor < p_fsm->current_state) && queue_query(p_main_queue, false, false)) {
-                FSM_transition(p_fsm, ENTERED_FLOOR, p_main_queue, p_timer);
-            }
+            // if ((*target_floor > p_fsm->current_floor) && queue_query(p_main_queue, true, false)){
+            //     FSM_transition(p_fsm, ENTERED_FLOOR, p_main_queue, p_timer);
+            // } else if ((*target_floor < p_fsm->current_state) && queue_query(p_main_queue, false, false)) {
+            //     FSM_transition(p_fsm, ENTERED_FLOOR, p_main_queue, p_timer);
+            // }
             // if ((p_fsm->current_state == UP_EMPTY || p_fsm->current_state == UP_UNEMPTY) && queue_query(p_main_queue, true, false)){ // sjekker om samme retning som heisen. riktig med false?
             //     FSM_transition(p_fsm, ENTERED_FLOOR, p_main_queue, p_timer);
             // } else if ((p_fsm->current_state == DOWN_EMPTY || p_fsm->current_state == DOWN_UNEMPTY) && queue_query(p_main_queue, false, false)) {
@@ -121,5 +127,5 @@ void run(
     FSM_behaviour(p_fsm, p_timer, p_main_queue);
 
     // queue_print(p_main_queue);
-    // printf("Current state: %d\n", p_fsm->current_state);
+    printf("Current state: %d\n", p_fsm->current_state);
 }

@@ -1,5 +1,6 @@
 #include "timer.h"
 
+// TODO: rename all functions to start with 'timer'
 time_t* timer_init(){
     time_t* p_timer = (time_t*)malloc(sizeof(time_t));
 
@@ -21,8 +22,8 @@ void reset_timer(time_t* p_timer){
 }
 
 // checks whether the timer has ran out of time and resets it if so
-bool time_limit(time_t* p_timer){
-    return (difftime(time(NULL), *p_timer) >= 3);
+bool time_limit(time_t* p_timer, int limit){
+    return (difftime(time(NULL), *p_timer) >= limit);
     
     
     //     reset_timer(p_timer);

@@ -1,4 +1,6 @@
 #pragma once
+#include "time.h"
+#include "timer.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
@@ -16,4 +18,8 @@ typedef enum{
 
 void lamp_toggle(Lamp m_lamp, int floor, bool enable);
 
-// L3 og L4!
+void lamp_disable_all();
+
+void lamp_startup(time_t* p_timer, int* floor);
+
+void lamp_set_all_on_floor(int floor);
