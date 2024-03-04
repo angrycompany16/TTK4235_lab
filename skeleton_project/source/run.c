@@ -69,19 +69,17 @@ void run(
         if (*target_floor == elevio_floorSensor()) {
             // TODO: also make elevator stop when someone enters in the same direction
             // men er dette riktig sted da?
+
             if ((*target_floor > p_fsm->current_floor) && queue_query(p_main_queue, true, false)){
                 FSM_transition(p_fsm, ENTERED_FLOOR, p_main_queue, p_timer);
             } else if ((*target_floor < p_fsm->current_state) && queue_query(p_main_queue, false, false)) {
                 FSM_transition(p_fsm, ENTERED_FLOOR, p_main_queue, p_timer);
             }
-
-            /*
-            if ((p_fsm->current_state == UP_EMPTY || p_fsm->current_state == UP_UNEMPTY) && queue_query(p_main_queue, true, false)){ // sjekker om samme retning som heisen. riktig med false?
-                FSM_transition(p_fsm, ENTERED_FLOOR, p_main_queue, p_timer);
-            } else if ((p_fsm->current_state == DOWN_EMPTY || p_fsm->current_state == DOWN_UNEMPTY) && queue_query(p_main_queue, false, false)) {
-                FSM_transition(p_fsm, ENTERED_FLOOR, p_main_queue, p_timer);
-            }
-            */
+            // if ((p_fsm->current_state == UP_EMPTY || p_fsm->current_state == UP_UNEMPTY) && queue_query(p_main_queue, true, false)){ // sjekker om samme retning som heisen. riktig med false?
+            //     FSM_transition(p_fsm, ENTERED_FLOOR, p_main_queue, p_timer);
+            // } else if ((p_fsm->current_state == DOWN_EMPTY || p_fsm->current_state == DOWN_UNEMPTY) && queue_query(p_main_queue, false, false)) {
+            //     FSM_transition(p_fsm, ENTERED_FLOOR, p_main_queue, p_timer);
+            // } 
 
             FSM_transition(p_fsm, ENTERED_FLOOR, p_main_queue, p_timer);
         }
