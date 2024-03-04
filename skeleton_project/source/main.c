@@ -45,13 +45,12 @@ int main() {
         nanosleep(&(struct timespec){0, 20*1000*1000}, NULL);
     }
     printf("Elevator initialized!\n");
-    // printf("Current floor: %d", p_fsm->current_floor);
 
     /* Run */
     while(1) {
         run(&target_floor, p_main_queue, p_fsm, p_timer, p_stop_button, pp_up_buttons, pp_down_buttons, pp_cab_buttons);
         
-        nanosleep(&(struct timespec){0, 20*1000*1000}, NULL);
+        // nanosleep(&(struct timespec){0, 20*1000}, NULL);
     }
     
     queue_deinit(p_main_queue);

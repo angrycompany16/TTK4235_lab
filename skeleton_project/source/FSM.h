@@ -23,7 +23,7 @@ typedef enum {
 
     CLOSED_EMPTY, 
     CLOSED_UNEMPTY
-} FSM_State;
+} FSMState;
 
 typedef enum {
     STOP,
@@ -33,16 +33,16 @@ typedef enum {
     UP,
     DOWN,
     STAY
-} FSM_Trigger;
+} FSMTrigger;
 
 typedef enum {
     DIR_NONE = -1,
     DIR_DOWN,
     DIR_UP,
-} ELEVATOR_DIRECTION;
+} ElevatorDirection;
 
 typedef struct {
-    FSM_State current_state;
+    FSMState current_state;
     int current_floor;
     int direction;
     bool moving;
@@ -52,4 +52,4 @@ typedef struct {
 FSM* FSM_init(void);
 void FSM_deinit(FSM* p_fsm);
 void FSM_behaviour(FSM* p_fsm, time_t* p_timer, Queue* p_main_queue);
-void FSM_transition(FSM* p_fsm, FSM_Trigger trigger, Queue* p_main_queue, time_t* p_timer);
+void FSM_transition(FSM* p_fsm, FSMTrigger trigger, Queue* p_main_queue, time_t* p_timer);

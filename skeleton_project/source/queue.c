@@ -67,68 +67,90 @@ void queue_print(Queue* p_queue) {
 // }
 
 bool queue_query(Queue* p_queue, int floor, QueueQueryItem direction, QueueQueryItem off) {
+    // bool return value;
+    for (size_t i = 0; i < p_queue->youngest_queue_element; i++) {
+        // printf("Querying against\n");
+        // printf("floor: %d\n", p_queue->queue[i].floor);
+        // printf("direction: %d\n", p_queue->queue[i].direction);
+        // printf("off: %d\n", p_queue->queue[i].off);
+
+        if (check_request(&p_queue->queue[i], floor, direction, off)) { return true; }
+    }
+    return false;
+}    
+    
+bool check_request(Request* p_request, int floor, QueueQueryItem direction, QueueQueryItem off) {
     if (floor == -1) {
         if (direction == ANY) {
             // printf("floor: ANY, direction: ANY, off: ANY");
-            return queue_query_off(p_queue, off);
+            // return queue_query_off(p_queue, off);
+            return p_request->off == off;
         } else {
             if (off == ANY) {
                 // printf("floor: ANY, direction: something, off: ANY");
-                return queue_query_direction(p_queue, direction);
+                // return queue_query_direction(p_queue, direction);
+                return p_request->direction == direction;
             } else {
                 // printf("floor: ANY, direction: something, off: something");
-                return queue_query_off(p_queue, off) && queue_query_direction(p_queue, direction);
+                // return queue_query_off(p_queue, off) && queue_query_direction(p_queue, direction);
+                return p_request->direction == direction && p_request->off == off;
             }
         }
     } else {
         if (direction == ANY) {
             if (off == ANY) {
                 // printf("floor: something, direction: ANY, off: ANY");
-                return queue_query_floor(p_queue, floor);
+                // return queue_query_floor(p_queue, floor);
+                return p_request->floor == floor;
             } else {
                 // printf("floor: something, direction: ANY, off: something");
-                return queue_query_floor(p_queue, floor) && queue_query_off(p_queue, off);
+                // return queue_query_floor(p_queue, floor) && queue_query_off(p_queue, off);
+                return p_request->floor == floor && p_request->off == off;
             }
         } else {
             if (off == ANY) {
                 // printf("floor: something, direction: something, off: ANY");
-                return queue_query_floor(p_queue, floor) && queue_query_direction(p_queue, direction);
+                // return queue_query_floor(p_queue, floor) && queue_query_direction(p_queue, direction);
+                return p_request->floor == floor && p_request->direction == direction;
             } else {
                 // printf("floor: something, direction: something, off: something");
-                return queue_query_floor(p_queue, floor) && queue_query_off(p_queue, off) && queue_query_direction(p_queue, direction);
+                // return queue_query_floor(p_queue, floor) && queue_query_off(p_queue, off) && queue_query_direction(p_queue, direction);
+                return p_request->floor == floor && p_request->direction == direction && p_request->off == off;
             }
         }
     }
     return false;
 }
 
-static bool queue_query_floor(Queue* p_queue, int floor) {
-    for (size_t i = 0; i < p_queue->youngest_queue_element; i++) {
-        if (p_queue->queue[i].floor == floor) {
-            return true;
-        }
-    }
-    return false;
-}
 
-static bool queue_query_direction(Queue* p_queue, bool direction) {
-    for (size_t i = 0; i < p_queue->youngest_queue_element; i++) {
-        if (p_queue->queue[i].direction == direction) {
-            return true;
-        }
-    }
-    return false;
-}
 
-static bool queue_query_off(Queue* p_queue, bool off) {
-    for (size_t i = 0; i < p_queue->youngest_queue_element; i++) {
-        if (p_queue->queue[i].off == off) {
-            return true;
-        }
-    }
-    return false;
+// static bool queue_query_floor(Queue* p_queue, int floor) {
+//     for (size_t i = 0; i < p_queue->youngest_queue_element; i++) {
+//         if (p_queue->queue[i].floor == floor) {
+//             return true;
+//         }
+//     }
+//     return false;
+// }
 
-}
+// static bool queue_query_direction(Queue* p_queue, bool direction) {
+//     for (size_t i = 0; i < p_queue->youngest_queue_element; i++) {
+//         if (p_queue->queue[i].direction == direction) {
+//             return true;
+//         }
+//     }
+//     return false;
+// }
+
+// static bool queue_query_off(Queue* p_queue, bool off) {
+//     for (size_t i = 0; i < p_queue->youngest_queue_element; i++) {
+//         if (p_queue->queue[i].off == off) {
+//             return true;
+//         }
+//     }
+//     return false;
+
+// }
 
 Request* queue_find_first_off_request(Queue* p_queue) {
     for (size_t i = 0; i < p_queue->youngest_queue_element; i++) {

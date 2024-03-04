@@ -99,7 +99,7 @@ void FSM_behaviour(FSM* p_fsm, time_t* p_timer, Queue* p_main_queue){
     }
 }
 
-void FSM_transition(FSM* p_fsm, FSM_Trigger trigger, Queue* p_main_queue, time_t* p_timer){    
+void FSM_transition(FSM* p_fsm, FSMTrigger trigger, Queue* p_main_queue, time_t* p_timer){    
 
     switch(p_fsm->current_state) {
 
@@ -109,6 +109,7 @@ void FSM_transition(FSM* p_fsm, FSM_Trigger trigger, Queue* p_main_queue, time_t
                     queue_remove_all(p_main_queue, elevio_floorSensor());
                     lamp_toggle(LAMP_CAB, elevio_floorSensor(), false);
                     lamp_toggle(LAMP_UP, elevio_floorSensor(), false);
+                    lamp_toggle(LAMP_DOWN, elevio_floorSensor(), false);
                     p_fsm->current_state = OPEN_UNEMPTY;
                     reset_timer(p_timer);
                     break;
@@ -127,7 +128,8 @@ void FSM_transition(FSM* p_fsm, FSM_Trigger trigger, Queue* p_main_queue, time_t
                     queue_remove_all(p_main_queue, elevio_floorSensor());
                     lamp_toggle(LAMP_CAB, elevio_floorSensor(), false);
                     lamp_toggle(LAMP_UP, elevio_floorSensor(), false);
-                    if (queue_query(p_main_queue, -1, ANY, TRUE)){
+                    lamp_toggle(LAMP_DOWN, elevio_floorSensor(), false);
+                    if (queue_query(p_main_queue, -1, ANY, FALSE)){
                         reset_timer(p_timer);
                         p_fsm->current_state = OPEN_UNEMPTY;
                     } else {
@@ -147,6 +149,7 @@ void FSM_transition(FSM* p_fsm, FSM_Trigger trigger, Queue* p_main_queue, time_t
                     p_fsm->current_state = OPEN_UNEMPTY;
                     queue_remove_all(p_main_queue, elevio_floorSensor());
                     lamp_toggle(LAMP_CAB, elevio_floorSensor(), false);
+                    lamp_toggle(LAMP_UP, elevio_floorSensor(), false);
                     lamp_toggle(LAMP_DOWN, elevio_floorSensor(), false);
                     reset_timer(p_timer);
                     break;
@@ -165,8 +168,9 @@ void FSM_transition(FSM* p_fsm, FSM_Trigger trigger, Queue* p_main_queue, time_t
                 case ENTERED_FLOOR: 
                     queue_remove_all(p_main_queue, elevio_floorSensor());
                     lamp_toggle(LAMP_CAB, elevio_floorSensor(), false);
+                    lamp_toggle(LAMP_UP, elevio_floorSensor(), false);
                     lamp_toggle(LAMP_DOWN, elevio_floorSensor(), false);
-                    if (queue_query(p_main_queue, -1, ANY, TRUE)) {
+                    if (queue_query(p_main_queue, -1, ANY, FALSE)) {
                         reset_timer(p_timer);
                         p_fsm->current_state = OPEN_UNEMPTY;
                     } else {
@@ -223,6 +227,8 @@ void FSM_transition(FSM* p_fsm, FSM_Trigger trigger, Queue* p_main_queue, time_t
                     reset_timer(p_timer);
                     queue_remove_all(p_main_queue, elevio_floorSensor());
                     lamp_toggle(LAMP_CAB, elevio_floorSensor(), false);
+                    lamp_toggle(LAMP_UP, elevio_floorSensor(), false);
+                    lamp_toggle(LAMP_DOWN, elevio_floorSensor(), false);
                     break;
                 default:
                     p_fsm->current_state = CLOSED_EMPTY;
@@ -249,6 +255,8 @@ void FSM_transition(FSM* p_fsm, FSM_Trigger trigger, Queue* p_main_queue, time_t
                     reset_timer(p_timer);
                     queue_remove_all(p_main_queue, elevio_floorSensor());
                     lamp_toggle(LAMP_CAB, elevio_floorSensor(), false);
+                    lamp_toggle(LAMP_UP, elevio_floorSensor(), false);
+                    lamp_toggle(LAMP_DOWN, elevio_floorSensor(), false);
                     break;
                 default:
                     p_fsm->current_state = CLOSED_UNEMPTY;

@@ -1,5 +1,7 @@
 #include "run.h"
 
+// TODO: Make lights work proplerly with stop button
+// TODO: Performance improvements
 void run(
     int* target_floor, 
     Queue* p_main_queue, 
@@ -52,11 +54,12 @@ void run(
             if (i > current_floor) {
                 queue_add(p_main_queue, (Request) {i, true, true});
                 queue_print(p_main_queue);
+                lamp_toggle(LAMP_CAB, i, true);
             } else if (i < current_floor) {
                 queue_add(p_main_queue, (Request) {i, false, true});
                 queue_print(p_main_queue);
+                lamp_toggle(LAMP_CAB, i, true);
             }
-            lamp_toggle(LAMP_CAB, i, true);
         }
     }
 
@@ -81,22 +84,9 @@ void run(
             FSM_transition(p_fsm, STAY, p_main_queue, p_timer);
         }
     } else {
-        // printf("Floor sensor: %d\n", current_floor);
         if (current_floor != -1) {
             p_fsm->current_floor = current_floor;
-            // Oppdatere current-lys (cursed løsning? hehe)
             lamp_toggle(LAMP_CURRENT, current_floor, true);
-
-            // if (*target_floor > p_fsm->current_floor){ // beveger seg oppover
-            
-            // } else {
-            //     lamp_toggle(LAMP_CURRENT, p_fsm->current_floor + 1, false);
-            // }
-            // evt:
-            // lamp_toggle(LAMP_CURRENT, p_fsm->current_floor + 1, false);
-            // lamp_toggle(LAMP_CURRENT, p_fsm->current_floor - 1, false);
-
-            // printf("%d     ", current_floor);
 
             if (queue_query(p_main_queue, current_floor, p_fsm->direction, ANY)) {
                 FSM_transition(p_fsm, ENTERED_FLOOR, p_main_queue, p_timer);
@@ -104,28 +94,13 @@ void run(
         }
 
         if (*target_floor == current_floor) {
-            // TODO: also make elevator stop when someone enters in the same direction
-            // men er dette riktig sted da?
-
-            // if ((*target_floor > p_fsm->current_floor) && queue_query(p_main_queue, true, false)){
-            //     FSM_transition(p_fsm, ENTERED_FLOOR, p_main_queue, p_timer);
-            // } else if ((*target_floor < p_fsm->current_state) && queue_query(p_main_queue, false, false)) {
-            //     FSM_transition(p_fsm, ENTERED_FLOOR, p_main_queue, p_timer);
-            // }
-            // if ((p_fsm->current_state == UP_EMPTY || p_fsm->current_state == UP_UNEMPTY) && queue_query(p_main_queue, true, false)){ // sjekker om samme retning som heisen. riktig med false?
-            //     FSM_transition(p_fsm, ENTERED_FLOOR, p_main_queue, p_timer);
-            // } else if ((p_fsm->current_state == DOWN_EMPTY || p_fsm->current_state == DOWN_UNEMPTY) && queue_query(p_main_queue, false, false)) {
-            //     FSM_transition(p_fsm, ENTERED_FLOOR, p_main_queue, p_timer);
-            // } 
-
             FSM_transition(p_fsm, ENTERED_FLOOR, p_main_queue, p_timer);
         }
 
     }
     
-
     FSM_behaviour(p_fsm, p_timer, p_main_queue);
 
-    // queue_print(p_main_queue);
+    printf("Floor sensor: %d\n", current_floor);
     printf("Current state: %d\n", p_fsm->current_state);
 }
