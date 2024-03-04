@@ -79,10 +79,13 @@ void FSM_behaviour(FSM* p_fsm, time_t* p_timer, Queue* p_main_queue){
             elevio_motorDirection(DIRN_STOP);
             break;
         case BLOCKED_EMPTY:
+<<<<<<< HEAD
+=======
             if (time_limit(p_timer)){
                 printf("Blocked empty elevator, timer ran out\n");
                 FSM_transition(p_fsm, TIMER, p_main_queue, p_timer);
             }
+>>>>>>> 7149ce90f57c397a32f4a367495aa6813fcdd36a
             p_fsm->moving = false;
             p_fsm->direction = DIR_NONE;
             elevio_motorDirection(DIRN_STOP);
