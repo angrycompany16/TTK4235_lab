@@ -8,10 +8,12 @@
 #include "queue.h"
 #include "run.h"
 #include "button.h"
+#include "lamp.h"
 
 // TODO: check pragma once
 
 int main() {
+
     elevio_init();
     time_t* p_timer = timer_init();
     FSM* p_fsm = FSM_init();

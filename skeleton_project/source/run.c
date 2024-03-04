@@ -36,11 +36,13 @@ void run(
         if (pp_down_buttons[i]->was_just_pressed) {
             queue_add(p_main_queue, (Request) {i, false, false});
             queue_print(p_main_queue);
+            lamp_toggle(LAMP_DOWN, i, true);
         }
 
         if (pp_up_buttons[i]->was_just_pressed) {
             queue_add(p_main_queue, (Request) {i, true, false});
             queue_print(p_main_queue);
+            lamp_toggle(LAMP_UP, i, true);
         }
 
         if (pp_cab_buttons[i]->was_just_pressed) {
@@ -51,6 +53,7 @@ void run(
                 queue_add(p_main_queue, (Request) {i, false, true});
                 queue_print(p_main_queue);
             }
+            lamp_toggle(LAMP_CAB, i, true);
         }
     }
 
@@ -82,13 +85,27 @@ void run(
                 FSM_transition(p_fsm, ENTERED_FLOOR, p_main_queue, p_timer);
             }
         }
-        
+
         if (*target_floor == elevio_floorSensor()) {
             // TODO: also make elevator stop when someone enters in the same direction
+            // men er dette riktig sted da?
+
+            if ((*target_floor > p_fsm->current_floor) && queue_query(p_main_queue, true, false)){
+                FSM_transition(p_fsm, ENTERED_FLOOR, p_main_queue, p_timer);
+            } else if ((*target_floor < p_fsm->current_state) && queue_query(p_main_queue, false, false)) {
+                FSM_transition(p_fsm, ENTERED_FLOOR, p_main_queue, p_timer);
+            }
+            // if ((p_fsm->current_state == UP_EMPTY || p_fsm->current_state == UP_UNEMPTY) && queue_query(p_main_queue, true, false)){ // sjekker om samme retning som heisen. riktig med false?
+            //     FSM_transition(p_fsm, ENTERED_FLOOR, p_main_queue, p_timer);
+            // } else if ((p_fsm->current_state == DOWN_EMPTY || p_fsm->current_state == DOWN_UNEMPTY) && queue_query(p_main_queue, false, false)) {
+            //     FSM_transition(p_fsm, ENTERED_FLOOR, p_main_queue, p_timer);
+            // } 
+
             FSM_transition(p_fsm, ENTERED_FLOOR, p_main_queue, p_timer);
         }
 
     }
+    
 
     FSM_behaviour(p_fsm, p_timer, p_main_queue);
 

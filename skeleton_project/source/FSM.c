@@ -1,5 +1,4 @@
 #include "FSM.h"
-#include "timer.h"
 
 FSM* FSM_init(){
 
@@ -24,30 +23,31 @@ void FSM_deinit(FSM* p_fsm) {
 void FSM_behaviour(FSM* p_fsm, time_t* p_timer, Queue* p_main_queue){
     switch(p_fsm->current_state) {
         case UP_EMPTY:
+            lamp_toggle(LAMP_DOOR, p_fsm->current_floor, false);
             p_fsm->moving = true;
             p_fsm->direction = DIR_UP;
             elevio_motorDirection(DIRN_UP);
-            elevio_doorOpenLamp(0);
             break;
         case UP_UNEMPTY:
+            lamp_toggle(LAMP_DOOR, p_fsm->current_floor, false);
             p_fsm->moving = true;
             p_fsm->direction = DIR_UP;
             elevio_motorDirection(DIRN_UP);
-            elevio_doorOpenLamp(0);
             break;
         case DOWN_EMPTY:
+            lamp_toggle(LAMP_DOOR, p_fsm->current_floor, false);
             p_fsm->moving = true;
             p_fsm->direction = DIR_DOWN;
             elevio_motorDirection(DIRN_DOWN);
-            elevio_doorOpenLamp(0);
             break;
         case DOWN_UNEMPTY:
+            lamp_toggle(LAMP_DOOR, p_fsm->current_floor, false);
             p_fsm->moving = true;
             p_fsm->direction = DIR_DOWN;
             elevio_motorDirection(DIRN_DOWN);
-            elevio_doorOpenLamp(0);
             break;
         case OPEN_EMPTY:
+            lamp_toggle(LAMP_DOOR, p_fsm->current_floor, true);
             if (time_limit(p_timer)){
                 printf("Empty elevator, timer ran out\n");
                 FSM_transition(p_fsm, TIMER, p_main_queue, p_timer);
@@ -55,9 +55,9 @@ void FSM_behaviour(FSM* p_fsm, time_t* p_timer, Queue* p_main_queue){
             p_fsm->moving = false;
             p_fsm->direction = DIR_NONE;
             elevio_motorDirection(DIRN_STOP);
-            elevio_doorOpenLamp(1);
             break;
         case OPEN_UNEMPTY: 
+            lamp_toggle(LAMP_DOOR, p_fsm->current_floor, true);
             if (time_limit(p_timer)){
                 printf("Unempty elevator, timer ran out\n");
                 FSM_transition(p_fsm, TIMER, p_main_queue, p_timer);
@@ -65,19 +65,18 @@ void FSM_behaviour(FSM* p_fsm, time_t* p_timer, Queue* p_main_queue){
             p_fsm->moving = false;
             p_fsm->direction = DIR_NONE;
             elevio_motorDirection(DIRN_STOP);
-            elevio_doorOpenLamp(1);
             break;
         case CLOSED_EMPTY:
+            lamp_toggle(LAMP_DOOR, p_fsm->current_floor, false);
             p_fsm->moving = false;
             p_fsm->direction = DIR_NONE;
             elevio_motorDirection(DIRN_STOP);
-            elevio_doorOpenLamp(0);
             break;
         case CLOSED_UNEMPTY:
+            lamp_toggle(LAMP_DOOR, p_fsm->current_floor, false);
             p_fsm->moving = false;
             p_fsm->direction = DIR_NONE;
             elevio_motorDirection(DIRN_STOP);
-            elevio_doorOpenLamp(0);
             break;
         case BLOCKED_EMPTY:
             if (time_limit(p_timer)){
@@ -87,7 +86,6 @@ void FSM_behaviour(FSM* p_fsm, time_t* p_timer, Queue* p_main_queue){
             p_fsm->moving = false;
             p_fsm->direction = DIR_NONE;
             elevio_motorDirection(DIRN_STOP);
-            elevio_doorOpenLamp(1);
             break;
         case BLOCKED_UNEMPTY:
             if (time_limit(p_timer)){
@@ -97,7 +95,6 @@ void FSM_behaviour(FSM* p_fsm, time_t* p_timer, Queue* p_main_queue){
             p_fsm->moving = false;
             p_fsm->direction = DIR_NONE;
             elevio_motorDirection(DIRN_STOP);
-            elevio_doorOpenLamp(1);
             break;
     }
 }
@@ -110,9 +107,10 @@ void FSM_transition(FSM* p_fsm, FSM_Trigger trigger, Queue* p_main_queue, time_t
             switch(trigger){
                 case ENTERED_FLOOR: 
                     queue_remove_all(p_main_queue, elevio_floorSensor());
+                    lamp_toggle(LAMP_CAB, elevio_floorSensor(), false);
+                    lamp_toggle(LAMP_UP, elevio_floorSensor(), false);
                     p_fsm->current_state = OPEN_UNEMPTY;
                     reset_timer(p_timer);
-
                     break;
                 default:
                     p_fsm->current_state = UP_EMPTY;
@@ -127,7 +125,8 @@ void FSM_transition(FSM* p_fsm, FSM_Trigger trigger, Queue* p_main_queue, time_t
                     break;
                 case ENTERED_FLOOR: 
                     queue_remove_all(p_main_queue, elevio_floorSensor());
-
+                    lamp_toggle(LAMP_CAB, elevio_floorSensor(), false);
+                    lamp_toggle(LAMP_UP, elevio_floorSensor(), false);
                     if (queue_query(p_main_queue, -1, ANY, TRUE)){
                         reset_timer(p_timer);
                         p_fsm->current_state = OPEN_UNEMPTY;
@@ -135,7 +134,6 @@ void FSM_transition(FSM* p_fsm, FSM_Trigger trigger, Queue* p_main_queue, time_t
                         reset_timer(p_timer);
                         p_fsm->current_state = OPEN_EMPTY;
                     }
-
                     break;
                 default:
                     p_fsm->current_state = UP_UNEMPTY;
@@ -148,8 +146,9 @@ void FSM_transition(FSM* p_fsm, FSM_Trigger trigger, Queue* p_main_queue, time_t
                 case ENTERED_FLOOR: 
                     p_fsm->current_state = OPEN_UNEMPTY;
                     queue_remove_all(p_main_queue, elevio_floorSensor());
+                    lamp_toggle(LAMP_CAB, elevio_floorSensor(), false);
+                    lamp_toggle(LAMP_DOWN, elevio_floorSensor(), false);
                     reset_timer(p_timer);
-
                     break;
                 default:
                     printf("default\n");
@@ -165,7 +164,8 @@ void FSM_transition(FSM* p_fsm, FSM_Trigger trigger, Queue* p_main_queue, time_t
                     break;
                 case ENTERED_FLOOR: 
                     queue_remove_all(p_main_queue, elevio_floorSensor());
-
+                    lamp_toggle(LAMP_CAB, elevio_floorSensor(), false);
+                    lamp_toggle(LAMP_DOWN, elevio_floorSensor(), false);
                     if (queue_query(p_main_queue, -1, ANY, TRUE)){
                         reset_timer(p_timer);
                         p_fsm->current_state = OPEN_UNEMPTY;
@@ -173,7 +173,6 @@ void FSM_transition(FSM* p_fsm, FSM_Trigger trigger, Queue* p_main_queue, time_t
                         reset_timer(p_timer);
                         p_fsm->current_state = OPEN_EMPTY;
                     }
-
                     break;
                 default:
                     p_fsm->current_state = DOWN_UNEMPTY;
@@ -199,7 +198,6 @@ void FSM_transition(FSM* p_fsm, FSM_Trigger trigger, Queue* p_main_queue, time_t
                     p_fsm->current_state = OPEN_EMPTY;
                     queue_clear(p_main_queue);
                     reset_timer(p_timer);
-
                     break;
                 case OBSTRUCTION:
                     p_fsm->current_state = BLOCKED_UNEMPTY;
@@ -224,7 +222,7 @@ void FSM_transition(FSM* p_fsm, FSM_Trigger trigger, Queue* p_main_queue, time_t
                     p_fsm->current_state = OPEN_UNEMPTY;
                     reset_timer(p_timer);
                     queue_remove_all(p_main_queue, elevio_floorSensor());
-
+                    lamp_toggle(LAMP_CAB, elevio_floorSensor(), false);
                     break;
                 default:
                     p_fsm->current_state = CLOSED_EMPTY;
@@ -250,6 +248,7 @@ void FSM_transition(FSM* p_fsm, FSM_Trigger trigger, Queue* p_main_queue, time_t
                     p_fsm->current_state = OPEN_UNEMPTY;
                     reset_timer(p_timer);
                     queue_remove_all(p_main_queue, elevio_floorSensor());
+                    lamp_toggle(LAMP_CAB, elevio_floorSensor(), false);
                     break;
                 default:
                     p_fsm->current_state = CLOSED_UNEMPTY;

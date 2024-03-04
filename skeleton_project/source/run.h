@@ -7,6 +7,7 @@
 #include "driver/elevio.h"
 #include "button.h"
 #include "FSM.h"
+#include "lamp.h"
 
 void run(
     int* target_floor, 
