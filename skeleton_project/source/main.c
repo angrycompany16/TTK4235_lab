@@ -20,16 +20,13 @@ int main() {
     Queue* p_main_queue = queue_init();
     int target_floor = -1;
 
-    Button* up_buttons[] = { button_init(), button_init(), button_init(), button_init() };
-    Button* down_buttons[] = { button_init(), button_init(), button_init(), button_init() };
-    Button* cab_buttons[] = { button_init(), button_init(), button_init(), button_init() };
+    Button* pp_up_buttons[] = { button_init(), button_init(), button_init(), button_init() };
+    Button* pp_down_buttons[] = { button_init(), button_init(), button_init(), button_init() };
+    Button* pp_cab_buttons[] = { button_init(), button_init(), button_init(), button_init() };
+    Button* p_stop_button = button_init();
 
     while(1) {
-        run(&target_floor, p_main_queue, p_fsm, p_timer, up_buttons, down_buttons, cab_buttons);
-
-        if (elevio_stopButton()) {
-            break;
-        }
+        run(&target_floor, p_main_queue, p_fsm, p_timer, p_stop_button, pp_up_buttons, pp_down_buttons, pp_cab_buttons);
         
         nanosleep(&(struct timespec){0, 20*1000*1000}, NULL);
     }
@@ -38,10 +35,11 @@ int main() {
     FSM_deinit(p_fsm);
     timer_deinit(p_timer);
     for (int i = 0; i < 4; i++) {
-        button_deinit(up_buttons[i]);
-        button_deinit(down_buttons[i]);
-        button_deinit(cab_buttons[i]);
+        button_deinit(pp_up_buttons[i]);
+        button_deinit(pp_down_buttons[i]);
+        button_deinit(pp_cab_buttons[i]);
     }
+    button_deinit(p_stop_button);
 
     return 0;
 
