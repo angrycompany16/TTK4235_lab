@@ -64,6 +64,17 @@ void run(
         // printf("Floor sensor: %d\n", elevio_floorSensor());
         if (elevio_floorSensor() != -1) {
             p_fsm->current_floor = elevio_floorSensor();
+            // Oppdatere current-lys (cursed løsning? hehe)
+            lamp_toggle(LAMP_CURRENT, p_fsm->current_floor, true);
+
+            if (*target_floor > p_fsm->current_floor){ // beveger seg oppover
+                lamp_toggle(LAMP_CURRENT, p_fsm->current_floor - 1, false);
+            } else {
+                lamp_toggle(LAMP_CURRENT, p_fsm->current_floor + 1, false);
+            }
+            // evt:
+            // lamp_toggle(LAMP_CURRENT, p_fsm->current_floor + 1, false);
+            // lamp_toggle(LAMP_CURRENT, p_fsm->current_floor - 1, false);
         }
 
         if (*target_floor == elevio_floorSensor()) {

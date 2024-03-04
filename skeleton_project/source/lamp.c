@@ -1,28 +1,11 @@
 #include "lamp.h"
-/*
-Lamp* lamp_init(){
 
-    Lamp* p_lamp = (Lamp*)malloc(sizeof(Lamp));
-
-    if (p_lamp!= NULL) {
-        *p_lamp = BUTTON_HALL_DOWN;
-        // *p_lamp = ; Lyse i etasjen heisen starter i?
-    } else {
-        printf("Error allocating memory for button\n");
-    }
-
-    return p_lamp;
-}
-
-void lamp_deinit(Lamp* p_lamp) {
-    free(p_lamp);
-}
-*/
-
-void toggle(Lamp_2 m_lamp, int floor, bool enable){
+void lamp_toggle(Lamp m_lamp, int floor, bool enable){
     switch(m_lamp){
         case LAMP_CURRENT:
-            // hvordan håndtere disse lysene?
+            while (elevio_floorSensor() != -1) {
+                elevio_floorIndicator(floor);
+            }
             break;
         case LAMP_UP:
             elevio_buttonLamp(floor, BUTTON_HALL_UP, enable);

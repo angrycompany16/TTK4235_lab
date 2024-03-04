@@ -73,7 +73,6 @@ void FSM_behaviour(FSM* p_fsm, time_t* p_timer, Queue* p_main_queue){
             elevio_motorDirection(DIRN_STOP);
             break;
         case BLOCKED_EMPTY:
-            // Ikke endre dør-lys?
             p_fsm->moving = false;
             elevio_motorDirection(DIRN_STOP);
             break;
