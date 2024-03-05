@@ -28,10 +28,10 @@ void run(
 
     if (p_stop_button->was_just_released) { lamp_toggle(LAMP_STOP, -1, false); }
 
-    if (p_stop_button->pressed) { reset_timer(p_timer); }
+    if (p_stop_button->pressed) { timer_reset(p_timer); }
 
     if (elevio_obstruction()) {
-        reset_timer(p_timer);
+        timer_reset(p_timer);
         FSM_transition(p_fsm, OBSTRUCTION, p_main_queue, p_timer);
     }
 

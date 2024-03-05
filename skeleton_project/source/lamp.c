@@ -41,9 +41,9 @@ void lamp_disable_all() {
 }
 
 void lamp_startup(time_t* p_timer, int* floor) {
-    if (time_limit(p_timer, 0.75)) {
+    if (timer_limit(p_timer, 0.75)) {
         lamp_set_all_on_floor((*floor)++);
-        reset_timer(p_timer);
+        timer_reset(p_timer);
         *floor %= 4;
     }
 }
