@@ -123,6 +123,7 @@ void FSM_transition(FSM* p_fsm, FSMTrigger trigger, Queue* p_main_queue, time_t*
                 case STOP:
                     p_fsm->current_state = CLOSED_UNEMPTY;
                     queue_clear(p_main_queue);
+                    lamp_disable_all();
                     break;
                 case ENTERED_FLOOR: 
                     queue_remove_all(p_main_queue, elevio_floorSensor());
@@ -164,6 +165,7 @@ void FSM_transition(FSM* p_fsm, FSMTrigger trigger, Queue* p_main_queue, time_t*
                 case STOP:
                     p_fsm->current_state = CLOSED_UNEMPTY;
                     queue_clear(p_main_queue);
+                    lamp_disable_all();
                     break;
                 case ENTERED_FLOOR: 
                     queue_remove_all(p_main_queue, elevio_floorSensor());
@@ -199,6 +201,7 @@ void FSM_transition(FSM* p_fsm, FSMTrigger trigger, Queue* p_main_queue, time_t*
         case OPEN_UNEMPTY: 
             switch(trigger){
                 case STOP:
+                    lamp_disable_all();
                     p_fsm->current_state = OPEN_EMPTY;
                     queue_clear(p_main_queue);
                     timer_reset(p_timer);
@@ -238,6 +241,7 @@ void FSM_transition(FSM* p_fsm, FSMTrigger trigger, Queue* p_main_queue, time_t*
         case CLOSED_UNEMPTY:
             switch(trigger){
                 case STOP:
+                    lamp_disable_all();
                     if (elevio_floorSensor()!=-1){
                         p_fsm->current_state = OPEN_EMPTY;
                         queue_clear(p_main_queue);
