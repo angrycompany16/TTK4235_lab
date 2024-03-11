@@ -52,4 +52,4 @@ typedef struct {
 FSM* FSM_init(void);
 void FSM_deinit(FSM* p_fsm);
 void FSM_behaviour(FSM* p_fsm, time_t* p_timer, Queue* p_main_queue);
-void FSM_transition(FSM* p_fsm, FSMTrigger trigger, Queue* p_main_queue, time_t* p_timer);
+void FSM_transition(FSM* p_fsm, FSMTrigger trigger, Queue* p_main_queue, time_t* p_timer, int* current_floor);

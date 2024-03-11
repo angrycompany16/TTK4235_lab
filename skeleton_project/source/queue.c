@@ -35,6 +35,7 @@ void queue_remove(Queue* p_queue, size_t pos)  {
 }
 
 void queue_remove_all(Queue* p_queue, int floor) {
+    printf("Removing all from floor %d\n", floor);
     for (size_t i = 0; i < p_queue->youngest_queue_element; i++) {
         if (p_queue->queue[i].floor == floor) {
             queue_remove(p_queue, i);
@@ -57,23 +58,9 @@ void queue_print(Queue* p_queue) {
     }
 }
 
-// bool queue_has_off_requests(Queue* p_queue) {
-//     for (size_t i = 0; i < p_queue->youngest_queue_element; i++) {
-//         if (p_queue->queue[i].off == true) {
-//             return true;
-//         }
-//     }
-//     return false;
-// }
-
 bool queue_query(Queue* p_queue, int floor, QueueQueryItem direction, QueueQueryItem off) {
     // bool return value;
     for (size_t i = 0; i < p_queue->youngest_queue_element; i++) {
-        // printf("Querying against\n");
-        // printf("floor: %d\n", p_queue->queue[i].floor);
-        // printf("direction: %d\n", p_queue->queue[i].direction);
-        // printf("off: %d\n", p_queue->queue[i].off);
-
         if (check_request(&p_queue->queue[i], floor, direction, off)) { return true; }
     }
     return false;
@@ -121,36 +108,6 @@ bool check_request(Request* p_request, int floor, QueueQueryItem direction, Queu
     }
     return false;
 }
-
-
-
-// static bool queue_query_floor(Queue* p_queue, int floor) {
-//     for (size_t i = 0; i < p_queue->youngest_queue_element; i++) {
-//         if (p_queue->queue[i].floor == floor) {
-//             return true;
-//         }
-//     }
-//     return false;
-// }
-
-// static bool queue_query_direction(Queue* p_queue, bool direction) {
-//     for (size_t i = 0; i < p_queue->youngest_queue_element; i++) {
-//         if (p_queue->queue[i].direction == direction) {
-//             return true;
-//         }
-//     }
-//     return false;
-// }
-
-// static bool queue_query_off(Queue* p_queue, bool off) {
-//     for (size_t i = 0; i < p_queue->youngest_queue_element; i++) {
-//         if (p_queue->queue[i].off == off) {
-//             return true;
-//         }
-//     }
-//     return false;
-
-// }
 
 Request* queue_find_first_off_request(Queue* p_queue) {
     for (size_t i = 0; i < p_queue->youngest_queue_element; i++) {

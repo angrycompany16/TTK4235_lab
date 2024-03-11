@@ -22,7 +22,7 @@ void run(
     }
 
     if (p_stop_button->was_just_pressed) {
-        FSM_transition(p_fsm, STOP, p_main_queue, p_timer);
+        FSM_transition(p_fsm, STOP, p_main_queue, p_timer, &current_floor);
         lamp_toggle(LAMP_STOP, -1, true);
     } 
 
@@ -32,8 +32,10 @@ void run(
 
     if (elevio_obstruction()) {
         timer_reset(p_timer);
-        FSM_transition(p_fsm, OBSTRUCTION, p_main_queue, p_timer);
+        FSM_transition(p_fsm, OBSTRUCTION, p_main_queue, p_timer, &current_floor);
     }
+
+    current_floor = elevio_floorSensor();
 
     for (int i = 0; i < 4; i++) {
         if (p_stop_button->pressed) { continue; }
@@ -63,6 +65,8 @@ void run(
         }
     }
 
+    current_floor = elevio_floorSensor();
+
     if (!p_fsm->moving) {
         if (queue_query(p_main_queue, -1, ANY, TRUE)) {
             *target_floor = queue_find_first_off_request(p_main_queue)->floor;
@@ -77,11 +81,11 @@ void run(
         if (*target_floor == -1) {
             // do nothing
         } else if (*target_floor < p_fsm->current_floor) {
-            FSM_transition(p_fsm, DOWN, p_main_queue, p_timer);
+            FSM_transition(p_fsm, DOWN, p_main_queue, p_timer, &current_floor);
         } else if (*target_floor > p_fsm->current_floor) {
-            FSM_transition(p_fsm, UP, p_main_queue, p_timer);
+            FSM_transition(p_fsm, UP, p_main_queue, p_timer, &current_floor);
         } else {
-            FSM_transition(p_fsm, STAY, p_main_queue, p_timer);
+            FSM_transition(p_fsm, STAY, p_main_queue, p_timer, &current_floor);
         }
     } else {
         if (current_floor != -1) {
@@ -89,18 +93,17 @@ void run(
             lamp_toggle(LAMP_CURRENT, current_floor, true);
 
             if (queue_query(p_main_queue, current_floor, p_fsm->direction, ANY)) {
-                FSM_transition(p_fsm, ENTERED_FLOOR, p_main_queue, p_timer);
+                FSM_transition(p_fsm, ENTERED_FLOOR, p_main_queue, p_timer, &current_floor);
             }
         }
 
         if (*target_floor == current_floor) {
-            FSM_transition(p_fsm, ENTERED_FLOOR, p_main_queue, p_timer);
+            FSM_transition(p_fsm, ENTERED_FLOOR, p_main_queue, p_timer, &current_floor);
         }
 
     }
     
     FSM_behaviour(p_fsm, p_timer, p_main_queue);
 
-    printf("Floor sensor: %d\n", current_floor);
     printf("Current state: %d\n", p_fsm->current_state);
 }
