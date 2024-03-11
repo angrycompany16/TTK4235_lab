@@ -34,7 +34,7 @@ void lamp_disable_all() {
         elevio_buttonLamp(i, BUTTON_HALL_UP, 0);
         elevio_buttonLamp(i, BUTTON_HALL_DOWN, 0);
         elevio_buttonLamp(i, BUTTON_CAB, 0);
-        elevio_stopLamp(0);
+        //elevio_stopLamp(0);
         elevio_doorOpenLamp(0);
         // elevio_buttonLamp(i, , 0);
     }
