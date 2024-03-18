@@ -34,9 +34,7 @@ void lamp_disable_all() {
         elevio_buttonLamp(i, BUTTON_HALL_UP, 0);
         elevio_buttonLamp(i, BUTTON_HALL_DOWN, 0);
         elevio_buttonLamp(i, BUTTON_CAB, 0);
-        //elevio_stopLamp(0);
         elevio_doorOpenLamp(0);
-        // elevio_buttonLamp(i, , 0);
     }
 }
 
@@ -49,7 +47,6 @@ void lamp_startup(time_t* p_timer, int* floor) {
 }
 
 void lamp_set_all_on_floor(int floor) {
-    // printf("Set all on floor was called\n");
     lamp_disable_all();
     elevio_floorIndicator(floor);
     elevio_buttonLamp(floor, BUTTON_HALL_UP, 1);

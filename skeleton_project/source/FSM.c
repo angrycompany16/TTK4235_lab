@@ -142,7 +142,6 @@ void FSM_transition(FSM* p_fsm, FSMTrigger trigger, Queue* p_main_queue, time_t*
                 default:
                     p_fsm->current_state = UP_UNEMPTY;
             }
-            // timer_reset(p_timer);
             break;
         
         case DOWN_EMPTY: 
@@ -156,7 +155,6 @@ void FSM_transition(FSM* p_fsm, FSMTrigger trigger, Queue* p_main_queue, time_t*
                     timer_reset(p_timer);
                     break;
                 default:
-                    // printf("default\n");
                     p_fsm->current_state = DOWN_EMPTY;
             }
             break;
@@ -189,7 +187,7 @@ void FSM_transition(FSM* p_fsm, FSMTrigger trigger, Queue* p_main_queue, time_t*
         case OPEN_EMPTY: 
             switch(trigger){
                 case OBSTRUCTION:
-                    p_fsm->current_state = BLOCKED_UNEMPTY;
+                    p_fsm->current_state = BLOCKED_EMPTY;
                     break;
                 case TIMER:
                     p_fsm->current_state = CLOSED_EMPTY;

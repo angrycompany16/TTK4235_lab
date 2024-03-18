@@ -31,13 +31,7 @@ void queue_clear(Queue* p_queue);
 
 void queue_print(Queue* p_queue);
 
-// bool queue_has_off_requests(Queue* p_queue);
-
 bool queue_query(Queue* p_queue, int floor, QueueQueryItem direction, QueueQueryItem off);
 bool check_request(Request* p_request, int floor, QueueQueryItem direction, QueueQueryItem off);
-
-// static bool queue_query_floor(Queue* p_queue, int floor);
-// static bool queue_query_direction(Queue* p_queue, bool direction);
-// static bool queue_query_off(Queue* p_queue, bool off);
 
 Request* queue_find_first_off_request(Queue* p_queue);

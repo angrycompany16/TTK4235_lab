@@ -1,7 +1,5 @@
 #include "run.h"
 
-// TODO: Make lights work proplerly with stop button
-// TODO: Performance improvements
 void run(
     int* target_floor, 
     Queue* p_main_queue, 
@@ -105,5 +103,5 @@ void run(
     
     FSM_behaviour(p_fsm, p_timer, p_main_queue);
 
-    printf("Current state: %d\n", p_fsm->current_state);
+    // printf("Current state: %d\n", p_fsm->current_state);
 }

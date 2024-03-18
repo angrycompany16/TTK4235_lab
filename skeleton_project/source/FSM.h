@@ -48,7 +48,6 @@ typedef struct {
     bool moving;
 } FSM;
 
-// functions
 FSM* FSM_init(void);
 void FSM_deinit(FSM* p_fsm);
 void FSM_behaviour(FSM* p_fsm, time_t* p_timer, Queue* p_main_queue);
